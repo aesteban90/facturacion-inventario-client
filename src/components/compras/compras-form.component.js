@@ -166,10 +166,11 @@ export default class ComprasForm extends Component{
                 proveedor: this.state.proveedorSelected.value,
                 fecha_compra: this.state.fechaCompra,
                 cantidad: this.state.cantidad,
-                costo: this.state.costo,
-                total: this.state.total,
+                costo: (this.state.costo+"").replace(/\./gi,''),
+                total: (this.state.total+"").replace(/\./gi,''),
                 user_updated: this.state.user_updated
             }
+
             axios.post(process.env.REACT_APP_SERVER_URL  + '/compras/update/'+this.state.idUpdate,compras)
                 .then(res => this.showNotification(true))
                 .catch(err => this.showNotification(false));            

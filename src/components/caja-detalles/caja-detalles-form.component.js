@@ -15,6 +15,7 @@ export default class CajaDetallesForm extends Component{
             ruc:'',
             div:'',
             razonsocial:'',
+            timbrado: {},
             inventarioSelected: {},
             inventarioOptions: [],
             clienteSelected: {},
@@ -42,6 +43,7 @@ export default class CajaDetallesForm extends Component{
         const currentUser = this.context.currentUser;
         this.setState({user_created: currentUser.name, user_updated: currentUser.name}) 
    
+        this.getTimbrado();//Obtiene los datos para la factura
         this.getInventariosOptions(); //Obtener Inventarios
         this.getClientesOptions(); //Obtiene los Clientes
 
@@ -55,6 +57,13 @@ export default class CajaDetallesForm extends Component{
 
         }, "1000");
     }    
+    getTimbrado = () =>{
+        axios.get(process.env.REACT_APP_SERVER_URL + "/timbrados/activado/0")
+        .then(response => {
+            console.log('timbrado activo', response.data)
+        })
+    }
+
     getClientesOptions = () => {
         axios.get(process.env.REACT_APP_SERVER_URL + "/clientes")
         .then(response => {
@@ -145,21 +154,24 @@ export default class CajaDetallesForm extends Component{
                 let codigo = parseInt(element.codigo);
                 if( codigo === cod_inv){
                     indexInventario = index;
+                    return false;
                 }
             })
-
-            let cantidad =  parseInt(codigobarra.substring(7,12)) / 1000;
-            let inventario = this.state.inventarioOptions[indexInventario];
-            let precio = inventario.precio;
-            let total = parseInt(inventario.precio * cantidad);
-            
-            this.setState({
-                inventarioSelected: inventario,
-                producto: inventario.label,
-                cantidad,
-                precio,
-                total
-            })
+            //Si encuentra el producto en el inventario
+            if(indexInventario){
+                let cantidad =  parseInt(codigobarra.substring(7,12)) / 1000;
+                let inventario = this.state.inventarioOptions[indexInventario];
+                let precio = inventario.precio;
+                let total = parseInt(inventario.precio * cantidad);
+                
+                this.setState({
+                    inventarioSelected: inventario,
+                    producto: inventario.label,
+                    cantidad,
+                    precio,
+                    total
+                })
+            }
         }else{
             this.setState({
                 inventarioSelected: this.state.inventarioOptions[0],
@@ -254,7 +266,7 @@ export default class CajaDetallesForm extends Component{
     submitFactura = () =>{
         alert('imprimir');
            
-        const factura = {
+        const factura = {            
             caja: this.props.caja._id,
             cliente: this.state.clienteSelected.value._id,
             recibido: this.state.pagamiento_recibido,
@@ -264,13 +276,16 @@ export default class CajaDetallesForm extends Component{
             user_updated: this.state.user_updated
         }
 
-        console.log('Factura', factura)
+        //console.log("Enviando al Parent para la impresion");
+        this.props.onParentPrintFactura(factura);
+
         /*
         axios.post(process.env.REACT_APP_SERVER_URL + '/facturas/add',factura)
-                .then(res => this.showNotification(true))
+                .then(res => {
+                    console.log('response factura', res)
+                    this.showNotification(true)
+                })
                 .catch(err => this.showNotification(false));
-
-a
         this.setState({
             codigoBarra:'',
             inventarioSelected: this.state.inventarioOptions[0],
@@ -295,6 +310,7 @@ a
                                     autoFocus={true}
                                     ref={c => (this._input = c)}
                                     required
+                                    maxLength={13} 
                                     className="form-control"
                                     value={this.state.codigoBarra}
                                     onChange={this.onChangeCodigoBarra} 

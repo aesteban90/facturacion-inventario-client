@@ -97,6 +97,19 @@ export default class CajaDetallesList extends Component{
                 </li>)
         })
     }
+
+    printFactura = (factura) => {
+        
+        axios.post(process.env.REACT_APP_SERVER_URL + '/facturas/update-factura',factura)
+                .then(res => this.showNotification(true))
+                .catch(err => this.showNotification(false));
+
+        console.log("Factura", factura);
+        console.log("Imprimir los detalles", this.state.datos);
+    }
+
+
+
     datalistTotales(){
         let precio = 0;
         let total = 0;
@@ -160,7 +173,7 @@ export default class CajaDetallesList extends Component{
                         </div>
                     </div>
                     <div className="col-md-4">                        
-                        <CajaDetallesForm caja={this.state.caja} onUpdateParentList={this.updateList} onUpdateParentUltimoVuelto={this.updateUltimoVuelto}/>
+                        <CajaDetallesForm caja={this.state.caja} onParentPrintFactura={this.printFactura} onUpdateParentList={this.updateList} onUpdateParentUltimoVuelto={this.updateUltimoVuelto}/>
                     </div>
                 </div>
             </div>

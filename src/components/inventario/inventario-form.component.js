@@ -120,9 +120,9 @@ export default class InventarioForm extends Component{
             const inventario = {
                 codigo: this.state.codigo,
                 descripcion: this.state.descripcion,
-                cantidad: this.state.cantidad && parseInt(this.state.cantidad.replace(/\./gi,'')),
-                precio_costo: this.state.precio_costo && parseInt(this.state.precio_costo.replace(/\./gi,'')),
-                precio_venta: parseInt(this.state.precio_venta.replace(/\./gi,'')),
+                cantidad: this.state.cantidad && parseInt((this.state.cantidad+"").replace(/\./gi,'')),
+                precio_costo: this.state.precio_costo && parseInt((this.state.precio_costo+"").replace(/\./gi,'')),
+                precio_venta: parseInt((this.state.precio_venta+"").replace(/\./gi,'')),
                 user_updated: this.state.user_updated
             }
             axios.post(process.env.REACT_APP_SERVER_URL+ '/inventarios/update/'+this.state.idUpdate,inventario)

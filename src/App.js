@@ -14,6 +14,7 @@ import ProveedoresList from './components/proveedores/proveedor-list.component';
 import CajaDetallesList from './components/caja-detalles/caja-detalles-list.component';
 import CajaConfigList from './components/caja-config/caja-config-list.component';
 import ClienteList from './components/clientes/cliente-list.component';
+import TimbradosList from './components/timbrados/timbrados-list.component';
 
 import Login from './components/login/login';
 import logout from './components/login/logout';
@@ -68,8 +69,7 @@ function App() {
                 <Route path='/Proveedores' element={<ProveedoresList />} />     
                 <Route path='/CajasConfig' element={<CajaConfigList />} /> 
                 <Route path='/Clientes' element={<ClienteList />} /> 
-                    
-                
+                <Route path='/Timbrados' element={<TimbradosList />} /> 
               </Routes>
             </BrowserRouter>
           </UserContext.Provider> 
