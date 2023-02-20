@@ -3,8 +3,6 @@ import axios from 'axios';
 import UserContext  from '../../UserContext';
 import Select from 'react-select';
 import { NumericFormat } from 'react-number-format';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { getDiv } from '../../utils/utils.js'
 
 export default class CajaDetallesForm extends Component{
@@ -60,7 +58,9 @@ export default class CajaDetallesForm extends Component{
     getTimbrado = () =>{
         axios.get(process.env.REACT_APP_SERVER_URL + "/timbrados/activado/0")
         .then(response => {
-            console.log('timbrado activo', response.data)
+            this.setState({
+                timbrado: response.data,
+            })
         })
     }
 
@@ -267,8 +267,9 @@ export default class CajaDetallesForm extends Component{
         alert('imprimir');
            
         const factura = {            
-            caja: this.props.caja._id,
-            cliente: this.state.clienteSelected.value._id,
+            caja: this.props.caja,
+            cliente: this.state.clienteSelected.value,
+            timbrado: this.state.timbrado,
             recibido: this.state.pagamiento_recibido,
             total: this.state.pagamiento_total,
             vuelto: this.state.pagamiento_vuelto,

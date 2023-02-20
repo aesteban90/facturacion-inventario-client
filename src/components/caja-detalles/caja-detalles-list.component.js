@@ -98,14 +98,98 @@ export default class CajaDetallesList extends Component{
         })
     }
 
-    printFactura = (factura) => {
-        
-        axios.post(process.env.REACT_APP_SERVER_URL + '/facturas/update-factura',factura)
-                .then(res => this.showNotification(true))
-                .catch(err => this.showNotification(false));
-
-        console.log("Factura", factura);
+    printFactura = (datos) => {
+        console.log("Factura", datos);
         console.log("Imprimir los detalles", this.state.datos);
+        
+        const factura = {
+            ruc: datos.cliente.ruc,
+            razonSocial: datos.cliente.razonsocial,
+            timbrado: datos.timbrado.numero,
+            numeroComprobante: datos.timbrado.comprobante,
+            recibido: parseInt((datos.recibido+"").replace(/\./gi,'')),
+            total: parseInt((datos.total+"").replace(/\./gi,'')),
+            vuelto: parseInt((datos.vuelto+"").replace(/\./gi,'')),
+            user_created: datos.user_created,
+            user_updated: datos.user_updated
+        }
+
+        
+        
+
+
+        
+        axios.post(process.env.REACT_APP_SERVER_URL + '/facturas/add',factura)
+        .then(response => {
+            let arrayIDsDetalles = [];
+            this.state.datos.forEach(record => {
+                const { _id } = record;
+                arrayIDsDetalles.push(_id);
+            })
+            axios.post(process.env.REACT_APP_SERVER_URL + '/cajas-detalles/update-factura',factura)
+            .then(() => {
+
+            })  
+            .catch(err => console.log(err));
+
+        })
+        .catch(err => console.log(err));
+        
+
+        /*
+        
+        const table = document.createElement('table');
+        let headerRow = document.createElement('tr');
+        let th = document.createElement('th');
+        th.colSpan = 4;
+        th.textContent = factura.timbrado.nombreEmpresa;
+        headerRow.appendChild(th);
+        table.appendChild(headerRow);
+
+        headerRow = document.createElement('tr');
+        th = document.createElement('td');
+        th.colSpan = 4;
+        th.textContent = factura.timbrado.ruc;
+        headerRow.appendChild(th);
+        table.appendChild(headerRow);
+
+        headerRow = document.createElement('tr');
+        th.colSpan = 4;
+        th = document.createElement('td');
+        th.textContent = "Comprobante #" + factura.timbrado.numero;
+        headerRow.appendChild(th);
+        table.appendChild(headerRow);
+
+        headerRow = document.createElement('tr');
+        const headers = process.env.REACT_APP_FACTURA_HEADERS.split(",");
+        headers.forEach(header => {
+            const th = document.createElement('th');
+            th.textContent = header;
+            headerRow.appendChild(th);
+        });
+        table.appendChild(headerRow);
+        
+        this.state.datos.forEach(record => {
+            const row = document.createElement('tr');
+            const { inventario, cantidad, precio, total } = record;
+            const data = [inventario.descripcion , convertMiles(cantidad), convertMiles(precio), convertMiles(total)]
+            
+            data.forEach(value => {
+                const td = document.createElement('td');
+                td.textContent = value;
+                row.appendChild(td);
+              });
+            
+            table.appendChild(row);
+        });
+
+        console.log(table);
+
+        const printWindow = window.open('', 'Print', 'height=600,width=800');
+        printWindow.document.write(table.outerHTML);
+        //printWindow.print();
+        //printWindow.close();
+        */
     }
 
 

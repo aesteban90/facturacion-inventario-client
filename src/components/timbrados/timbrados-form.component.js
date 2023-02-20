@@ -4,6 +4,7 @@ import UserContext  from '../../UserContext';
 import DatePicker from 'react-datepicker';
 import MaskedInput from 'react-maskedinput';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { NumericFormat } from 'react-number-format';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 export default class TimbradoForm extends Component{
@@ -14,6 +15,7 @@ export default class TimbradoForm extends Component{
             ruc:'',
             nombreEmpresa:'',
             numero:'',
+            comprobante: '',
             vencimiento:'',
             user_created: '',
             user_updated: '',
@@ -33,7 +35,7 @@ export default class TimbradoForm extends Component{
                         ruc: response.data.ruc,
                         nombreEmpresa: response.data.nombreEmpresa,
                         numero: response.data.numero,
-                        vencimiento: response.data.vencimiento,
+                        vencimiento: new Date(response.data.vencimiento),
                         textButton:'Editar',
                         titleForm: 'Editar Timbrado'
                     })
@@ -60,6 +62,7 @@ export default class TimbradoForm extends Component{
     }
 
     onChangeNumero = (e) => {this.setState({numero: e.target.value})}
+    onChangeComprobante = (e) => {this.setState({comprobante: e.target.value})}
     onChangeNombreEmpresa = (e) => {this.setState({nombreEmpresa: e.target.value})}
     onChangeRuc = (e) => { this.setState({ruc: e.target.value})}  
     onChangeVencimiento = (date) => { this.setState({ vencimiento: date })} 
@@ -91,6 +94,7 @@ export default class TimbradoForm extends Component{
                 ruc: this.state.ruc,
                 nombreEmpresa: this.state.nombreEmpresa,
                 numero: this.state.numero,
+                comprobante: this.state.comprobante,
                 estado: 'desactivado',
                 vencimiento: this.state.vencimiento,
                 user_created: this.state.user_created,
@@ -103,6 +107,7 @@ export default class TimbradoForm extends Component{
                 ruc:'',
                 nombreEmpresa:'',
                 numero:'',                
+                comprobante:'',
                 vencimiento:'',
                 textButton:'Crear',
                 titleForm: 'Crear Timbrado',
@@ -113,6 +118,7 @@ export default class TimbradoForm extends Component{
                 ruc: this.state.ruc,
                 nombreEmpresa: this.state.nombreEmpresa,
                 numero: this.state.numero,
+                comprobante: this.state.comprobante,
                 vencimiento: this.state.vencimiento,
                 user_updated: this.state.user_updated
             }
@@ -150,14 +156,26 @@ export default class TimbradoForm extends Component{
                             </div>  
                             <div className="form-group col-md-6">
                                 <label>Numero: </label>
-                                <input type="text" 
-                                    required                                    
+                                <NumericFormat 
+                                    thousandSeparator = ""
+                                    decimalSeparator = "_"
+                                    required
                                     className="form-control"
                                     value={this.state.numero}
                                     onChange={this.onChangeNumero}
                                 />
+                            </div> 
+                            <div className="form-group col-md-6">
+                                <label>Comprobante: </label>
+                                <input type="text" 
+                                    required                                    
+                                    className="form-control"
+                                    value={this.state.comprobante}
+                                    onChange={this.onChangeComprobante}
+                                />
                             </div>    
-                            <div className="form-group vencimiento col-md-5">
+                            
+                            <div className="form-group vencimiento col-md-6">
                                 <label>Vencimiento: </label>
                                 <DatePicker 
                                     className="form-control" 
