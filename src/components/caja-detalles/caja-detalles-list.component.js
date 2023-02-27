@@ -60,8 +60,9 @@ export default class CajaDetallesList extends Component{
         await axios.get(process.env.REACT_APP_SERVER_URL  + "/cajas/"+id)
             .then(response => {
                 const caja = response.data;
+                console.log('caja',caja);
                 this.setState({
-                    caja
+                    caja, ultimo_vuelto: caja.ultimoVuelto
                 })                  
             })
             .catch(err => console.log(err))      
@@ -98,9 +99,7 @@ export default class CajaDetallesList extends Component{
         })
     }
 
-    printFactura = (datos) => {
-        console.log("Factura", datos);
-        console.log("Imprimir los detalles", this.state.datos);
+    printFactura = async (datos) => {
         
         const factura = {
             ruc: datos.cliente.ruc,
@@ -113,20 +112,20 @@ export default class CajaDetallesList extends Component{
             user_created: datos.user_created,
             user_updated: datos.user_updated
         }
-
-        
-        
-
-
-        
-        axios.post(process.env.REACT_APP_SERVER_URL + '/facturas/add',factura)
+        /*
+        await axios.post(process.env.REACT_APP_SERVER_URL + '/facturas/add',factura)
         .then(response => {
             let arrayIDsDetalles = [];
             this.state.datos.forEach(record => {
                 const { _id } = record;
                 arrayIDsDetalles.push(_id);
             })
-            axios.post(process.env.REACT_APP_SERVER_URL + '/cajas-detalles/update-factura',factura)
+
+            const cajaDetalles = { 
+                ids: arrayIDsDetalles,
+                factura: response.data.id
+            };
+            axios.post(process.env.REACT_APP_SERVER_URL + '/cajas-detalles/update-factura',cajaDetalles)
             .then(() => {
 
             })  
@@ -135,9 +134,27 @@ export default class CajaDetallesList extends Component{
         })
         .catch(err => console.log(err));
         
+        const caja = {
+            id: this.state.caja._id,
+            ultimoVuelto: parseInt((datos.vuelto+"").replace(/\./gi,''))
+        }
+        //guardando ultimo vuelto en caja
+        axios.post(process.env.REACT_APP_SERVER_URL + '/cajas/ultimoVuelto',caja)
+            .then(res => {
+                
+            })  
+            .catch(err => console.log(err));
 
-        /*
-        
+        //Limpiando los seleccionados
+        this.setState({
+            ultimo_vuelto: caja.ultimoVuelto,
+            datos: []
+        })
+        */
+
+
+
+
         const table = document.createElement('table');
         let headerRow = document.createElement('tr');
         let th = document.createElement('th');
@@ -187,9 +204,9 @@ export default class CajaDetallesList extends Component{
 
         const printWindow = window.open('', 'Print', 'height=600,width=800');
         printWindow.document.write(table.outerHTML);
-        //printWindow.print();
-        //printWindow.close();
-        */
+        printWindow.print();
+        printWindow.close();
+        
     }
 
 

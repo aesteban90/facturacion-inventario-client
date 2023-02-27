@@ -121,9 +121,10 @@ export default class CajaDetallesForm extends Component{
             e.preventDefault();//Para que no cargue el key
         }
         if (e.key === "+" || e.key === "Enter") {
+            e.preventDefault();    
             //Actualiza el ultimo vuelto
             this.props.onUpdateParentUltimoVuelto(this.state.pagamiento_vuelto);
-
+                
             document.querySelector('#PanelVueltos').classList.add("d-none");
             document.querySelector('#PanelCliente').classList.remove("d-none");            
             this._inputBuscarCliente.focus();//Enfoca en el input del ruc cliente
@@ -212,7 +213,6 @@ export default class CajaDetallesForm extends Component{
         })
     }
 
-
     showNotification(isSuccess){   
         /* 
         document.querySelector('#alert').classList.replace('hide','show');
@@ -260,12 +260,11 @@ export default class CajaDetallesForm extends Component{
 
     onSubtmitCliente = (e) => {
         e.preventDefault();    
-        this.submitFactura()    
+        this.submitFactura();
     }   
 
     submitFactura = () =>{
         alert('imprimir');
-           
         const factura = {            
             caja: this.props.caja,
             cliente: this.state.clienteSelected.value,
@@ -280,22 +279,10 @@ export default class CajaDetallesForm extends Component{
         //console.log("Enviando al Parent para la impresion");
         this.props.onParentPrintFactura(factura);
 
-        /*
-        axios.post(process.env.REACT_APP_SERVER_URL + '/facturas/add',factura)
-                .then(res => {
-                    console.log('response factura', res)
-                    this.showNotification(true)
-                })
-                .catch(err => this.showNotification(false));
-        this.setState({
-            codigoBarra:'',
-            inventarioSelected: this.state.inventarioOptions[0],
-            producto: '',
-            cantidad: '',
-            precio: '',
-            total: ''
-        })  */
-
+        document.querySelector('#PanelProductos').classList.remove("d-none");
+        document.querySelector('#PanelVueltos').classList.add("d-none");
+        document.querySelector('#PanelCliente').classList.add("d-none");
+        this._input.focus();//Enfoca en el input del vuelto  
     }
     
     render(){
