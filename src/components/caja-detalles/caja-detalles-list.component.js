@@ -39,7 +39,7 @@ export default class CajaDetallesList extends Component{
                 this.setState({
                     datos: response.data,
                     loading: false
-                })                  
+                }, () => console.log(this.state))                  
             })
             .catch(err => console.log(err))
 
@@ -99,8 +99,7 @@ export default class CajaDetallesList extends Component{
         })
     }
 
-    printFactura = async (datos) => {
-        
+    printFactura = async (datos) => {       
         const factura = {
             ruc: datos.cliente.ruc,
             razonSocial: datos.cliente.razonsocial,
@@ -112,9 +111,8 @@ export default class CajaDetallesList extends Component{
             user_created: datos.user_created,
             user_updated: datos.user_updated
         }
-        /*
         await axios.post(process.env.REACT_APP_SERVER_URL + '/facturas/add',factura)
-        .then(response => {
+        .then( response => {
             let arrayIDsDetalles = [];
             this.state.datos.forEach(record => {
                 const { _id } = record;
@@ -125,12 +123,17 @@ export default class CajaDetallesList extends Component{
                 ids: arrayIDsDetalles,
                 factura: response.data.id
             };
-            axios.post(process.env.REACT_APP_SERVER_URL + '/cajas-detalles/update-factura',cajaDetalles)
-            .then(() => {
 
-            })  
+            //Falta Obtener el ultimo numero del comprobante y actualizarlo
+             axios.post(process.env.REACT_APP_SERVER_URL + '/cajas-detalles/update-factura',cajaDetalles)
             .catch(err => console.log(err));
 
+            //Actualizando el stock de los productos
+              axios.post(process.env.REACT_APP_SERVER_URL + '/inventarios/update-stock',this.state.datos)
+            .catch(err => console.log(err));
+
+            //Imprimiendo la factura
+            this.openPrintFactura(datos);
         })
         .catch(err => console.log(err));
         
@@ -138,87 +141,91 @@ export default class CajaDetallesList extends Component{
             id: this.state.caja._id,
             ultimoVuelto: parseInt((datos.vuelto+"").replace(/\./gi,''))
         }
-        //guardando ultimo vuelto en caja
-        axios.post(process.env.REACT_APP_SERVER_URL + '/cajas/ultimoVuelto',caja)
-            .then(res => {
-                
-            })  
+        
+        //Guardando ultimo vuelto en caja
+        await axios.post(process.env.REACT_APP_SERVER_URL + '/cajas/ultimoVuelto',caja)
             .catch(err => console.log(err));
 
         //Limpiando los seleccionados
         this.setState({
             ultimo_vuelto: caja.ultimoVuelto,
             datos: []
-        })
-        */
-
-
-
-
-        const table = document.createElement('table');
-        let headerRow = document.createElement('tr');
-        let th = document.createElement('th');
-        th.colSpan = 4;
-        th.textContent = factura.timbrado.nombreEmpresa;
-        headerRow.appendChild(th);
-        table.appendChild(headerRow);
-
-        headerRow = document.createElement('tr');
-        th = document.createElement('td');
-        th.colSpan = 4;
-        th.textContent = factura.timbrado.ruc;
-        headerRow.appendChild(th);
-        table.appendChild(headerRow);
-
-        headerRow = document.createElement('tr');
-        th.colSpan = 4;
-        th = document.createElement('td');
-        th.textContent = "Comprobante #" + factura.timbrado.numero;
-        headerRow.appendChild(th);
-        table.appendChild(headerRow);
-
-        headerRow = document.createElement('tr');
-        const headers = process.env.REACT_APP_FACTURA_HEADERS.split(",");
-        headers.forEach(header => {
-            const th = document.createElement('th');
-            th.textContent = header;
-            headerRow.appendChild(th);
-        });
-        table.appendChild(headerRow);
-        
-        this.state.datos.forEach(record => {
-            const row = document.createElement('tr');
-            const { inventario, cantidad, precio, total } = record;
-            const data = [inventario.descripcion , convertMiles(cantidad), convertMiles(precio), convertMiles(total)]
-            
-            data.forEach(value => {
-                const td = document.createElement('td');
-                td.textContent = value;
-                row.appendChild(td);
-              });
-            
-            table.appendChild(row);
-        });
-
-        console.log(table);
-
-        const printWindow = window.open('', 'Print', 'height=600,width=800');
-        printWindow.document.write(table.outerHTML);
-        printWindow.print();
-        printWindow.close();
-        
+        })                
     }
 
+    
 
+    openPrintFactura = (datos) => {
+        return new Promise((resolve, reject) => {
+
+            const table = document.createElement('table');
+            let headerRow = document.createElement('tr');
+            let th = document.createElement('th');
+            th.colSpan = 4;
+            th.textContent = datos.timbrado.nombreEmpresa;
+            headerRow.appendChild(th);
+            table.appendChild(headerRow);
+
+            /*
+            headerRow = document.createElement('tr');
+            th = document.createElement('td');
+            th.colSpan = 4;
+            th.textContent = datos.timbrado.ruc;
+            headerRow.appendChild(th);
+            table.appendChild(headerRow);
+    */
+
+            headerRow = document.createElement('tr');
+            th.colSpan = 4;
+            th = document.createElement('td');
+            //th.textContent = "Comprobante #" + datos.timbrado.comprobante;
+            th.textContent = "Comprobante #" + datos.timbrado.comprobante;
+            headerRow.appendChild(th);
+            table.appendChild(headerRow);
+
+            headerRow = document.createElement('tr');
+            const headers = process.env.REACT_APP_FACTURA_HEADERS.split(",");
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                headerRow.appendChild(th);
+            });
+            table.appendChild(headerRow);
+            
+            this.state.datos.forEach(record => {
+                const row = document.createElement('tr');
+                const { inventario, cantidad, precio, total } = record;
+                const data = [inventario.descripcion , convertMiles(cantidad), convertMiles(precio), convertMiles(total)]
+                
+                data.forEach(value => {
+                    const td = document.createElement('td');
+                    td.textContent = value;
+                    row.appendChild(td);
+                });
+                
+                table.appendChild(row);
+            });
+
+            console.log(table);
+
+            const printWindow = window.open('', 'Print', 'height=600,width=800');
+            printWindow.document.write(table.outerHTML);
+            printWindow.print();
+
+            resolve(printWindow.close());            
+        });
+
+        
+    }
 
     datalistTotales(){
         let precio = 0;
         let total = 0;
         let cantidad = 0;
         this.state.datos.map((dato) => {    
-            cantidad += dato.cantidad
-            precio += dato.precio
-            total += dato.total 
+            cantidad += dato.cantidad;
+            precio += dato.precio;
+            total += dato.total ;
         })
         
         
@@ -260,7 +267,7 @@ export default class CajaDetallesList extends Component{
                                     </div>                                 
                                 </div>
                             </div>
-                            <ul id="list" className="list-group overflow-auto" style={{height:'500px'}}>
+                            <ul id="list" className="list-group overflow-auto">
                                 {this.state.loading  ? 
                                     <Spinner animation="border" variant="primary" style={{margin:"25px",alignSelf:"center"}}/> 
                                 :

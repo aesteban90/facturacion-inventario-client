@@ -2,7 +2,6 @@ import { useContext } from 'react';
 import { Navbar, NavBarItemFolder, NavBarItem } from './navbar.component';
 import { faGripHorizontal, faWarehouse, faUserGear, faGear, faList, faUsers, faTruck, faBoxesStacked, faBox, faUserSecret, faCartShopping } from '@fortawesome/free-solid-svg-icons';
 import { UserContext } from '../../UserContext';
-import moment from 'moment';
 import { NavbarTopMenu } from './navbar-top';
 
 const Menu = (props) =>{

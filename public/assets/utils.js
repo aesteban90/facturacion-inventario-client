@@ -1,6 +1,15 @@
 $( document ).ready(function() {    
     verifySearch();
 });
+var setElementHeight = function () {
+    var height = $(window).height() - 300;
+    $('#list').css('height', (height));
+};
+
+$(window).on("resize", function () {
+    setElementHeight();
+}).resize();
+
 var counter = 0;
 function verifySearch(){
     counter++;

@@ -1,6 +1,8 @@
 import { useState }  from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import companyLogo from '../../imagens/logo_150x350.png';
+//import companyLogo from '../../imagens/logo_150x350.png';
+import companyLogo from '../../imagens/LogoDRDistribuidora.PNG';
+    
 import logout from '../login/logout';
 
 const NavbarTop = (props) =>{

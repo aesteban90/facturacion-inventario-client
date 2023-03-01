@@ -46,10 +46,10 @@ export default class CajaDetallesForm extends Component{
         this.getClientesOptions(); //Obtiene los Clientes
 
         setInterval(() => {            
-            if (document.activeElement != this._input){
+            if (document.activeElement !== this._input){
                 this._input.focus();
             };
-            if (document.activeElement != this._inputRecibido){
+            if (document.activeElement !== this._inputRecibido){
                 this._inputRecibido.focus();
             };
 
@@ -110,7 +110,8 @@ export default class CajaDetallesForm extends Component{
             e.preventDefault();//Para que no cargue el key
             //Generar la factura e imprimir
 
-            this.submitFactura()
+            //this.submitFactura()
+            this.onSubtmitCliente(e);
         }
     }
     onKeyPressRecibido = (e) =>{   
@@ -243,7 +244,6 @@ export default class CajaDetallesForm extends Component{
             user_created: this.state.user_created,
             user_updated: this.state.user_updated
         }
-        
         axios.post(process.env.REACT_APP_SERVER_URL + '/cajas-detalles/add',detalleCaja)
             .then(res => this.showNotification(true))
             .catch(err => this.showNotification(false));
@@ -259,13 +259,8 @@ export default class CajaDetallesForm extends Component{
     }   
 
     onSubtmitCliente = (e) => {
-        e.preventDefault();    
-        this.submitFactura();
-    }   
-
-    submitFactura = () =>{
-        alert('imprimir');
-        const factura = {            
+        e.preventDefault();
+        let factura = {            
             caja: this.props.caja,
             cliente: this.state.clienteSelected.value,
             timbrado: this.state.timbrado,
@@ -276,7 +271,24 @@ export default class CajaDetallesForm extends Component{
             user_updated: this.state.user_updated
         }
 
-        //console.log("Enviando al Parent para la impresion");
+        const clientes = {
+            ruc: this.state.ruc,
+            div: this.state.div,
+            razonsocial: this.state.razonsocial,
+            user_created: this.state.user_created,
+            user_updated: this.state.user_updated
+        }
+
+        axios.post(process.env.REACT_APP_SERVER_URL + '/clientes/comprobar',clientes)
+            .then(res => {
+                factura.cliente = res.data;
+                this.submitFactura(factura)
+            })
+            .catch(err => console.log(err));
+        
+    }   
+
+    submitFactura = (factura) =>{
         this.props.onParentPrintFactura(factura);
 
         document.querySelector('#PanelProductos').classList.remove("d-none");
