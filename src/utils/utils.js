@@ -18,6 +18,7 @@ export function getDiv(numero){
 }
 
 export function convertMiles(nStr) {
+    
     nStr += '';
     nStr = nStr.replace('.',',');
     if(nStr.indexOf(",")>-1){

@@ -272,7 +272,7 @@ export default class CajaDetallesList extends Component{
                                     <Spinner animation="border" variant="primary" style={{margin:"25px",alignSelf:"center"}}/> 
                                 :
                                     this.state.datos.length === 0 ?
-                                        <div className="col-md-12 text-center m-3">Sin registros encontrados</div>
+                                        <div className="col-md-11 text-center m-3">Sin registros encontrados</div>
                                     :
                                         this.datalist()
                                 }                                

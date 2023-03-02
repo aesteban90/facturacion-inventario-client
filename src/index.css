@@ -259,3 +259,7 @@ hr.solid {
   border-radius: 0.3rem;
   background-color: #e1e2e4;
 }
+
+.reportVentasPorDia{
+  background-color: #FFF !important;
+}

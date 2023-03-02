@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { UserContext } from './UserContext';
 import './utils/registerLocaleEsp';
 
+import Dashboard from './components/dashboard/dasboard.component';
 import CajaList from './components/caja/caja-list.component';
 import UsuariosList from './components/usuarios/usuarios-list.component';
 import InventarioList from './components/inventario/inventario-list.component';
@@ -60,6 +61,7 @@ function App() {
             }
             <BrowserRouter>
               <Routes>
+                <Route path='/Dashboard' element={<Dashboard />} />
                 <Route path='/Caja' element={<CajaList />} />
                 <Route path='/CajaDetalles' element={<CajaDetallesList />} />
 
