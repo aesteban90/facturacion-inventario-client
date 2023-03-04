@@ -140,11 +140,12 @@ export default class InventarioForm extends Component{
                 <form onSubmit={this.onSubtmit}>
                         <div className="row">
                             <div className="form-group col-md-12">
-                                <label>Codigo Barra: </label>
+                                <label>Codigo Barra (Requerido 5 caracteres): </label>
                                 <input type="text" 
                                     autoFocus={true}
                                     ref={c => (this._input = c)}
                                     required
+                                    maxLength={5} 
                                     className="form-control"
                                     value={this.state.codigo}
                                     onChange={this.onChangeCodigo}

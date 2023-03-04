@@ -263,3 +263,18 @@ hr.solid {
 .reportVentasPorDia{
   background-color: #FFF !important;
 }
+.btn-check {
+  position: absolute;
+  clip: rect(0,0,0,0);
+  pointer-events: none;
+}
+.btn-check:active+.btn-outline, .btn-check:checked+.btn-outline, .btn-outline.active, .btn-outline.dropdown-toggle.show, .btn-outline:active {
+  color: #fff;
+  background-color: #198754;
+  border-color: #198754;
+}
+
+.btn-outline{
+  background-color: #fff;
+  margin-left: 5px;
+}

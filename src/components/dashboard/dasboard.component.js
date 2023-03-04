@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
-import MaskedInput from 'react-maskedinput';
 import Chart from "react-apexcharts";
+import 'react-datepicker/dist/react-datepicker.css';
 const { convertMiles } = require('../../utils/utils.js')
 
 export default class Dashboard extends Component{
@@ -11,7 +11,7 @@ export default class Dashboard extends Component{
         this.state = {
             month: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Setiembre','Octubre','Noviembre','Diciembre'],
             dataPerYear: {},         
-            reporteVentas_totalMes:'',
+            reporteVentas_totales_ventas:'',
             reporteVentas_fechaDia: new Date(),
             reporteVentas_fechaMes: new Date(),
             reporteVentas_options: {
@@ -26,7 +26,7 @@ export default class Dashboard extends Component{
 
     async componentDidMount(){      
         this.productosMasVendidos();
-        this.productosPorMes();
+        this.productosPorFecha();
     }
     onChangeReporteVentasFechaMes = (date) => {this.setState({reporteVentas_fechaMes: date}, () => this.reportePorMes())}    
     onChangeReporteVentasFechaDia = (date) => {this.setState({reporteVentas_fechaDia: date}, () => this.reportePorDia())}    
@@ -36,15 +36,17 @@ export default class Dashboard extends Component{
             .catch(err => console.log(err))
     }
     
-    productosPorMes =  () => {
+    productosPorFecha =  () => {
         axios.get(process.env.REACT_APP_SERVER_URL + "/cajas-detalles/totalesPorMes/1")
             .then(res => {
-                this.setState({dataPerYear: res.data}, () => this.reportePorDia())
+                this.setState({dataPerYear: res.data}, () => {this.reportePorDia(); document.querySelector('#dia-outlined').checked = true})
             })
             .catch(err => console.log(err))
     }
 
     reportePorDia = () =>{
+        document.querySelector('#datepicker_dia').classList.remove('d-none')
+        document.querySelector('#datepicker_mes').classList.add('d-none')
         let day = [];
         let totalesPerDay = [];
         let totalMes = 0;
@@ -68,13 +70,16 @@ export default class Dashboard extends Component{
                         return "Gs. " + convertMiles(val)
                     }
                 }
+            },
+            dataLabels: {
+                enabled: false
             }
         };
         let reporteVentas_series = [
             {name: "Totales",data: totalesPerDay}
         ];
 
-        this.setState({reporteVentas_options, reporteVentas_series, reporteVentas_totalMes: 'Gs. '+convertMiles(totalMes)})
+        this.setState({reporteVentas_options, reporteVentas_series, reporteVentas_totales_ventas: 'Gs. '+convertMiles(totalMes)})
     }
 
     reportePorMes = () =>{
@@ -84,9 +89,10 @@ export default class Dashboard extends Component{
         let month = [];
         let totalesPerMonth = [];        
         let totalAnho = 0;
-        
+        let yearSelected = this.state.reporteVentas_fechaMes.getFullYear();
+
         this.state.dataPerYear.map(dataYear => {
-            dataYear.monthlyusage.map(dataMonth => {
+            dataYear._id.year === yearSelected && dataYear.monthlyusage.map(dataMonth => {
                 let totales = 0;
                 dataMonth.dailyusage.map(dataDayli => {
                     totales += dataDayli.totalPrecio;
@@ -97,7 +103,7 @@ export default class Dashboard extends Component{
             })
         })
         let reporteVentas_options = {
-            chart: {id: "basic-bar",type: 'bar'},                
+            chart: {id: "basic-bar",type: 'bar'},
             xaxis: {categories: month},
             yaxis: {
                 labels: {
@@ -105,13 +111,56 @@ export default class Dashboard extends Component{
                         return "Gs. " + convertMiles(val)
                     }
                 }
+            },            
+            dataLabels: {
+                enabled: false
             }
         };
         let reporteVentas_series = [
             {name: "Totales",data: totalesPerMonth}
         ];
 
-        this.setState({reporteVentas_options, reporteVentas_series, reporteVentas_totalAnho: 'Gs. '+convertMiles(totalAnho)})
+        this.setState({reporteVentas_options, reporteVentas_series, reporteVentas_totales_ventas: 'Gs. '+convertMiles(totalAnho)})
+    }
+    
+    reportePorAnho = () =>{
+        document.querySelector('#datepicker_dia').classList.add('d-none')
+        document.querySelector('#datepicker_mes').classList.add('d-none')
+
+        let year = [];
+        let totalesPerYear = [];        
+        let totalAnho = 0;
+        
+        this.state.dataPerYear.map(dataYear => {
+            let totales = 0;
+            dataYear.monthlyusage.map(dataMonth => {                
+                dataMonth.dailyusage.map(dataDayli => {
+                    totales += dataDayli.totalPrecio;
+                    totalAnho += dataDayli.totalPrecio;
+                })                
+            })
+            totalesPerYear.push(totales)
+            year.push(dataYear._id.year)
+        })
+        let reporteVentas_options = {
+            chart: {id: "basic-bar",type: 'bar'},
+            xaxis: {categories: year},
+            yaxis: {
+                labels: {
+                    formatter: function(val) {
+                        return "Gs. " + convertMiles(val)
+                    }
+                }
+            },            
+            dataLabels: {
+                enabled: false
+            }
+        };
+        let reporteVentas_series = [
+            {name: "Totales",data: totalesPerYear}
+        ];
+
+        this.setState({reporteVentas_options, reporteVentas_series, reporteVentas_totales_ventas: 'Gs. '+convertMiles(totalAnho)})
     }
 
     render(){       
@@ -123,25 +172,25 @@ export default class Dashboard extends Component{
                         <div className="card">
                             <div className="card-header">
                                 <div className="card-title row mb-0">  
-                                    <div className="col-md-4">Reporte de Ventas Por dia</div>
+                                    <div className="col-md-4">Reporte de Ventas</div>
                                     <div className="col-md-8 text-right">
-                                        <button type="button" className="btn btn-light mr-3" onClick={() => this.reportePorDia()} >Dia</button>
-                                        <button type="button" className="btn btn-light mr-3" onClick={() => this.reportePorMes()}>Mes</button>
-                                        <button type="button" className="btn btn-light mr-3">Año</button>
+                                        <input type="radio" onClick={() => this.reportePorDia()} className="btn-check" name="options-outlined" id="dia-outlined" autoComplete="off" />
+                                        <label className="btn btn-outline" htmlFor="dia-outlined">Dia</label>
+                                        <input type="radio" onClick={() => this.reportePorMes()} className="btn-check" name="options-outlined" id="mes-outlined" autoComplete="off" />
+                                        <label className="btn btn-outline" htmlFor="mes-outlined">Mes</label>
+                                        <input type="radio" onClick={() => this.reportePorAnho()} className="btn-check" name="options-outlined" id="anho-outlined" autoComplete="off" />
+                                        <label className="btn btn-outline" htmlFor="anho-outlined">Año</label>
                                     </div>
                                 </div>
                             </div>
                             <div className="reportVentasPorDia card-body">
                                 <div className='row'>
-                                    <div className="col-md-9 d-flex">
+                                    <div className="col-md-10 d-flex">
                                         <div className="d-flex">
-                                            <p className="d-flex flex-column">
-                                                <span id='total_mes' className="text-bold text-lg"><b>{this.state.reporteVentas_totalMes}</b></span>
-                                                <span ><b>Totales de Ventas</b></span>
-                                            </p>                                    
+                                            <h3 id='totales_ventas' className="text-bold text-lg"><b>Total: {this.state.reporteVentas_totales_ventas}</b></h3>
                                         </div>
                                     </div>
-                                    <div id='datepicker_dia' className="col-md-3">
+                                    <div id='datepicker_dia' className="col-md-2">
                                         <DatePicker     
                                             className="form-control" 
                                             locale="esp"
@@ -152,13 +201,13 @@ export default class Dashboard extends Component{
                                             onChange={this.onChangeReporteVentasFechaDia}                                                                                   
                                         /> 
                                     </div>
-                                    <div id='datepicker_mes' className="col-md-3 d-none">
-                                        <DatePicker     
+                                    <div id='datepicker_mes' className="col-md-2 d-none">
+                                        <DatePicker                                             
                                             className="form-control" 
                                             locale="esp"
                                             required
                                             dateFormat="yyyy"
-                                            showYearPicker
+                                            showYearPicker={true}
                                             selected={this.state.reporteVentas_fechaMes}
                                             onChange={this.onChangeReporteVentasFechaMes}                                                                                   
                                         /> 
@@ -169,7 +218,7 @@ export default class Dashboard extends Component{
                                         options={this.state.reporteVentas_options}
                                         series={this.state.reporteVentas_series}
                                         type="bar"
-                                        width="500"
+                                        height={"300px"}
                                     />
                                 </div>
                             </div>
