@@ -45,6 +45,7 @@ export default class Dashboard extends Component{
     }
 
     reportePorDia = () =>{
+        console.log('dataPerYear',this.state.dataPerYear);
         document.querySelector('#datepicker_dia').classList.remove('d-none')
         document.querySelector('#datepicker_mes').classList.add('d-none')
         let day = [];
@@ -78,7 +79,7 @@ export default class Dashboard extends Component{
         let reporteVentas_series = [
             {name: "Totales",data: totalesPerDay}
         ];
-
+        
         this.setState({reporteVentas_options, reporteVentas_series, reporteVentas_totales_ventas: 'Gs. '+convertMiles(totalMes)})
     }
 
