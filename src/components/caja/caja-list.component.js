@@ -22,7 +22,7 @@ export default class CajaList extends Component{
     }
 
     updateList = async () => {
-        await axios.get(process.env.REACT_APP_SERVER_URL + "/cajas/")
+        await axios.get(process.env.REACT_APP_SERVER_URL + "/cajas")
             .then(response => {
                 this.setState({
                     datos: response.data,
@@ -35,30 +35,80 @@ export default class CajaList extends Component{
         //window.paginar('list-group','list-group-item',true);
     }
 
+    detallesFacturas = (dato) =>{
+        window.location.href = "/CajaFacturas?id="+dato._id
+    }
+
     componentDidMount(){this.updateList();}
     detalles = (jsondatos) => {window.location = "CajaDetalles?id="+jsondatos._id}    
     createData = (id) => {this.setState({idUpdate: id})}
-    cerrarCaja = () => {
+    cerrarCaja = async (jsondatos) => {
         //Cerrar Caja
+        let total_cierre_caja = 0;
+        await axios.get(process.env.REACT_APP_SERVER_URL + "/cajas-detalles/estado/"+jsondatos._id+"/Facturado")
+            .then(response => {
+                console.log(response.data)
+
+                response.data.map(data => {
+                    total_cierre_caja += data.total
+                })
+            })
+            .catch(err => console.log(err))
+
+        jsondatos.estado = "Cerrado";
+        jsondatos.montoCierre = total_cierre_caja;
+        console.log('jsondatos',jsondatos)
+        console.log('total_cierre_caja',total_cierre_caja)
+        
+        await axios.post(process.env.REACT_APP_SERVER_URL  + '/cajas/update/'+jsondatos._id,jsondatos)
+            .then(() => {
+                this.updateList();
+            })
+            .catch(err => alert(err));                    
     }
     datalist(){
         return this.state.datos.map(dato => {
             return (
                 <li className="list-group-item" key={dato._id}>
-                    <div className="col-md-3">{dato.cajaConf.descripcion} <br/><div className='alert alert-success-estado alert-success'>{dato.estado}</div> </div>
+                    <div className="col-md-3">{dato.cajaConf.descripcion} <br/>
+                        <div className={`alert alert-success-estado ${dato.estado === "Abierto" ? "alert-success" : "alert-danger"} `}>{dato.estado}</div> </div>
                     <div className="col-md-2">{moment(dato.fechaApertura).format("DD/MM/YYYY HH:mm:ss")}</div>
                     <div className="col-md-2">{dato.fechaCierre && moment(dato.fechaCierre).format("DD/MM/YYYY HH:mm:ss")}</div>
                     <div className="col-md-3">
                         <b>Apertura:</b> {convertMiles(dato.montoApertura)+" Gs."} <br/>
                         <b>Cierre:</b> {dato.montoCierre && convertMiles(dato.montoCierre)+" Gs."}
                     </div>
-                    <div className="col-md-2">
-                        <button onClick={() => this.detalles(dato)} type="button" className="btn btn-success btn-sm mr-1 mb-1">Detalles</button>
-                        <button onClick={() => this.cerrarCaja(dato)} type="button" className="btn btn-danger btn-sm mr-1">Cerrar Caja</button>
-                    </div>
+                    {dato.estado === "Abierto" &&
+                        <div className="col-md-2">
+                            <button onClick={() => this.detalles(dato)} type="button" className="btn btn-success btn-sm mr-1 mb-1">Detalles</button>
+                            <button onClick={() => this.cerrarCaja(dato)} type="button" className="btn btn-danger btn-sm mr-1">Cerrar Caja</button>
+                        </div>
+                    }
+                    {dato.estado === "Cerrado" &&
+                        <div className="col-md-2">
+                            <button onClick={() => this.detallesFacturas(dato)} type="button" className="btn btn-success btn-sm mr-1 mb-1">Facturas</button>
+                        </div>
+                    }
                 </li>)
         })
     }
+    verificarCaja = (id) => {
+        const isClosed = new Promise((resolve) => {
+            const isClosed = this.state.datos.map(dato => {
+                if(dato.cajaConf._id === id){
+                    if(dato.estado === "Abierto"){
+                        return false
+                    }else{
+                        return true
+                    }
+                }
+            })
+            resolve(isClosed[0])
+        })
+
+        return isClosed;
+    }
+
     render(){       
         return(
             <div className="content-wrapper" id="content">
@@ -91,7 +141,7 @@ export default class CajaList extends Component{
                         </div>
                     </div>
                     <div className="col-md-4">                        
-                            <CajaForm idUpdate={this.state.idUpdate} onUpdateParentList={this.updateList}/>                        
+                            <CajaForm onUpdateParentList={this.updateList} onParentVerificarCaja={this.verificarCaja}/>                        
                     </div>
                 </div>
             </div>

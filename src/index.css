@@ -20,9 +20,10 @@ code {
 }
 
 .alert-success-estado{
-  width: 70px;
-  height: 30px;
-  padding: 0 10px;
+    width: 90px;
+    height: 30px;
+    padding: 0px 10px;
+    text-align: center;
 }
 .list-productos {
   padding: 0.05rem !important;
@@ -260,7 +261,7 @@ hr.solid {
   background-color: #e1e2e4;
 }
 
-.reportVentasPorDia{
+.reportVentasPorDia, .reportVentasPorProducto{
   background-color: #FFF !important;
 }
 .btn-check {

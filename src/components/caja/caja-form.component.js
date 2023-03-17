@@ -48,31 +48,38 @@ export default class CajaForm extends Component{
     onChangeMontoApertura = (e) => {this.setState({montoApertura: e.target.value})}
     onChangeDescripcion = (e) => {this.setState({descripcion: e.target.value})}
     
-    showNotification(isSuccess){    
+    showNotification(isSuccess, message){    
         document.querySelector('#alert').classList.replace('hide','show');
-        if(isSuccess === true){
-            document.querySelector('#alert').classList.replace('alert-warning','alert-success');
-            document.querySelector('#alert #text').innerHTML = '<strong>Exito!</strong> Los datos han sido actualizados.'
-        }else{
+        if(message !== ''){
             document.querySelector('#alert').classList.replace('alert-success','alert-warning');
-            document.querySelector('#alert #text').innerHTML = '<strong>Error!</strong> Contacte con el administrador.'
+            document.querySelector('#alert #text').innerHTML = '<strong>Atencion!</strong> ' + message
+        }else{
+            if(isSuccess === true){
+                document.querySelector('#alert').classList.replace('alert-warning','alert-success');
+                document.querySelector('#alert #text').innerHTML = '<strong>Exito!</strong> Los datos han sido actualizados.'
+            }else{
+                document.querySelector('#alert').classList.replace('alert-success','alert-warning');
+                document.querySelector('#alert #text').innerHTML = '<strong>Error!</strong> Contacte con el administrador.'
+            }
         }
         //Enfocar el input
         //this._input.focus(); 
         //actualizar Lista
         this.props.onUpdateParentList('true');
-        setTimeout(function(){  document.querySelector('#alert').classList.replace('show','hide'); }, 3000);
+        setTimeout(function(){  document.querySelector('#alert').classList.replace('show','hide'); }, 5000);
     }
 
     handleCloseAlert = () =>{
         document.querySelector('#alert').classList.replace('show','hide');
     }
     
-    onSubtmit = (e) => {
+    onSubtmit = async (e) => {
         e.preventDefault();
         
-        if(this.props.idUpdate === "NEW" || this.props.idUpdate === "" ){
-            const caja = {
+        const isCerrado = await this.props.onParentVerificarCaja(this.state.cajaSelected.value);
+
+        if(isCerrado || isCerrado === undefined){
+             const caja = {
                 caja: this.state.cajaSelected.value,
                 estado: 'Abierto',
                 fechaApertura: this.state.fechaApertura,
@@ -90,16 +97,9 @@ export default class CajaForm extends Component{
                     titleForm: 'Abrir Caja',
                     idUpdate:'NEW'
                 })   
-                              
-        }else{            
-            const caja = {
-                montoApertura: this.state.montoApertura,
-                user_updated: this.state.user_updated
-            }
-            axios.post(process.env.REACT_APP_SERVER_URL  + '/cajas/update/'+this.state.idUpdate,caja)
-                .then(res => this.showNotification(true))
-                .catch(err => this.showNotification(false));            
-        }        
+        }else{
+            this.showNotification(false, "Cierre la caja seleccionada antes de abrir otro.")
+        }
     }   
     
     render(){          

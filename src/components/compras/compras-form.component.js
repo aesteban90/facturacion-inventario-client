@@ -229,7 +229,7 @@ export default class ComprasForm extends Component{
                                 /> 
                             </div>
                             <div className="form-group col-md-4">
-                                <label>Cantidad: </label>
+                                <label>Cantidad/KG: </label>
                                 <NumericFormat 
                                     thousandSeparator = "."
                                     decimalSeparator = ","

@@ -57,6 +57,7 @@ export default class CajaDetallesList extends Component{
     getCaja = async () => {
         const queryParameters = new URLSearchParams(window.location.search);
         const id = queryParameters.get("id");
+        console.log('id',id)
         await axios.get(process.env.REACT_APP_SERVER_URL  + "/cajas/"+id)
             .then(response => {
                 const caja = response.data;
@@ -214,7 +215,6 @@ export default class CajaDetallesList extends Component{
 
             resolve(printWindow.close());            
         });
-
         
     }
 
@@ -250,7 +250,7 @@ export default class CajaDetallesList extends Component{
                         <h2>{this.state.caja.cajaConf && 'Detalle ' + this.state.caja.cajaConf.descripcion}</h2>                        
                     </div>
                     <div className="col-md-5">
-                        <h2 className='text-center'>{'Ultimo Vuelto '+ convertMiles(this.state.ultimo_vuelto)+' Gs.'}</h2>                        
+                        <h2 className='text-center'>{'Ultimo Vuelto '+ (this.state.ultimo_vuelto ? convertMiles(this.state.ultimo_vuelto) : '0')+' Gs.'}</h2>                        
                     </div>
                     
                     <div className="col-md-8">

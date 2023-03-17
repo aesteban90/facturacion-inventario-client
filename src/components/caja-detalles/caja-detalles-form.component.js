@@ -134,14 +134,16 @@ export default class CajaDetallesForm extends Component{
     }
     onKeyPressCodigoBarra = (e) =>{       
         if (e.key === "+") {
-            document.querySelector('#PanelProductos').classList.add("d-none");
-            document.querySelector('#PanelVueltos').classList.remove("d-none");
-            this._inputRecibido.focus();//Enfoca en el input del vuelto
             e.preventDefault();//Para que no cargue el key
-
-            this.setState({
-                pagamiento_total: document.querySelector('#totales_total').innerText.replace(/\./gi,'')
-            })
+            if(document.querySelector('#totales_total') !== null){
+                document.querySelector('#PanelProductos').classList.add("d-none");
+                document.querySelector('#PanelVueltos').classList.remove("d-none");
+                this._inputRecibido.focus();//Enfoca en el input del vuelto
+                
+                this.setState({
+                    pagamiento_total: document.querySelector('#totales_total').innerText.replace(/\./gi,'')
+                })
+            }
         }
         if (e.key === "-")  e.preventDefault();//Para que no cargue el key
     }
@@ -244,6 +246,7 @@ export default class CajaDetallesForm extends Component{
             user_created: this.state.user_created,
             user_updated: this.state.user_updated
         }
+
         axios.post(process.env.REACT_APP_SERVER_URL + '/cajas-detalles/add',detalleCaja)
             .then(res => this.showNotification(true))
             .catch(err => this.showNotification(false));

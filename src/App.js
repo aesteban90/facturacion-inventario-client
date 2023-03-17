@@ -16,6 +16,7 @@ import CajaDetallesList from './components/caja-detalles/caja-detalles-list.comp
 import CajaConfigList from './components/caja-config/caja-config-list.component';
 import ClienteList from './components/clientes/cliente-list.component';
 import TimbradosList from './components/timbrados/timbrados-list.component';
+import CajaFacturasList from './components/caja-facturas/caja-facturas-list.component';
 
 import Login from './components/login/login';
 import logout from './components/login/logout';
@@ -52,6 +53,47 @@ function App() {
     });
   }
 
+  const menu = () => {
+    if(currentUser){
+      console.log('User registrado', currentUser);
+      if(currentUser.roles.includes('CAJERO')){
+        console.log('RETORNA CAJERO')
+        return menu_cajero()
+      }else if(currentUser.roles.includes('ADM')){
+        console.log('RETORNA ADM')
+        return menu_admin()
+      }
+    }
+  }
+
+  const menu_admin = () => {
+    return (
+      <Routes>
+          <Route path='/Dashboard' element={<Dashboard />} />
+          <Route path='/Caja' element={<CajaList />} />
+          <Route path='/CajaDetalles' element={<CajaDetallesList />} />
+          <Route path='/Usuarios' element={<UsuariosList />} />
+          <Route path='/Inventario' element={<InventarioList />} /> 
+          <Route path='/Compras' element={<ComprasList />} /> 
+          <Route path='/Proveedores' element={<ProveedoresList />} />     
+          <Route path='/CajasConfig' element={<CajaConfigList />} /> 
+          <Route path='/Clientes' element={<ClienteList />} /> 
+          <Route path='/Timbrados' element={<TimbradosList />} />                 
+          <Route path='/CajaFacturas' exact element={<CajaFacturasList />} /> 
+      </Routes>
+    )
+  }
+  const menu_cajero = () => {
+    return (
+      <Routes>
+          <Route path='/Dashboard' element={<Dashboard />} />
+          <Route path='/Caja' element={<CajaList />} />
+          <Route path='/CajaDetalles' element={<CajaDetallesList />} />
+          <Route path='/CajaFacturas' exact element={<CajaFacturasList />} /> 
+      </Routes>
+    )
+  }
+
   return (
     <div id="container"> 
         <div className="body-wrapper container-fluid p-0">  
@@ -60,19 +102,10 @@ function App() {
               (window.location.href.indexOf('CajaDetalles') < 0) ? <Menu/>  : <NavbarTopMenu />           
             }
             <BrowserRouter>
-              <Routes>
-                <Route path='/Dashboard' element={<Dashboard />} />
-                <Route path='/Caja' element={<CajaList />} />
-                <Route path='/CajaDetalles' element={<CajaDetallesList />} />
-
-                <Route path='/Usuarios' element={<UsuariosList />} />
-                <Route path='/Inventario' element={<InventarioList />} /> 
-                <Route path='/Compras' element={<ComprasList />} /> 
-                <Route path='/Proveedores' element={<ProveedoresList />} />     
-                <Route path='/CajasConfig' element={<CajaConfigList />} /> 
-                <Route path='/Clientes' element={<ClienteList />} /> 
-                <Route path='/Timbrados' element={<TimbradosList />} /> 
-              </Routes>
+              { 
+                menu()
+              }      
+              
             </BrowserRouter>
           </UserContext.Provider> 
         </div>

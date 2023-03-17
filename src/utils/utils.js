@@ -17,9 +17,24 @@ export function getDiv(numero){
     return digito;
 }
 
-export function convertMiles(nStr) {
-    
+export function convertMiles(nStr) {    
     nStr += '';
+    nStr = nStr.replace('.',',');
+    if(nStr.indexOf(",")>-1){
+        nStr = nStr.substring(0, nStr.indexOf(",") + 3);
+    }
+    var x = nStr.split('.');
+    var x1 = x[0];
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+            x1 = x1.replace(rgx, '$1.$2');
+    }    
+    return ( x1 === 'null' ? '' : x1);
+}
+
+export function convertMilesSinDecimales(nStr) {    
+    nStr += '';
+    nStr = nStr.split('.')[0];
     nStr = nStr.replace('.',',');
     if(nStr.indexOf(",")>-1){
         nStr = nStr.substring(0, nStr.indexOf(",") + 3);

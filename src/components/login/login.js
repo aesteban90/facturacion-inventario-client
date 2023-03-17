@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 // import PropTypes from 'prop-types';
-import companyLogo from '../../imagens/logo_150x350.png';
+//import companyLogo from '../../imagens/logo_150x350.png';
+import companyLogo from '../../imagens/LogoDRDistribuidora.PNG';
 import './login.css';
 const server = process.env.REACT_APP_SERVER_URL;
 
