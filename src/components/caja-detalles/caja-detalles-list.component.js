@@ -34,7 +34,10 @@ export default class CajaDetallesList extends Component{
         const queryParameters = new URLSearchParams(window.location.search);
         const id = queryParameters.get("id");
 
+        console.log("updateList", id)
+
         await axios.get(process.env.REACT_APP_SERVER_URL + "/cajas-detalles/estado/"+id+"/Agregado")
+        //await axios.get(process.env.REACT_APP_SERVER_URL + "/cajas-detalles/estado/"+id+"/Facturado")
             .then(response => {
                 this.setState({
                     datos: response.data,
@@ -43,8 +46,7 @@ export default class CajaDetallesList extends Component{
             })
             .catch(err => console.log(err))
 
-        //Pagina la lista
-        //window.paginar('list-group','list-group-item',true);
+       
     }
 
     componentDidMount(){
@@ -112,6 +114,7 @@ export default class CajaDetallesList extends Component{
             user_created: datos.user_created,
             user_updated: datos.user_updated
         }
+        
         await axios.post(process.env.REACT_APP_SERVER_URL + '/facturas/add',factura)
         .then( response => {
             let arrayIDsDetalles = [];
@@ -126,23 +129,26 @@ export default class CajaDetallesList extends Component{
             };
 
             //Falta Obtener el ultimo numero del comprobante y actualizarlo
-             axios.post(process.env.REACT_APP_SERVER_URL + '/cajas-detalles/update-factura',cajaDetalles)
-            .catch(err => console.log(err));
+            // axios.post(process.env.REACT_APP_SERVER_URL + '/cajas-detalles/update-factura',cajaDetalles)
+            //.catch(err => console.log(err));
+
+            //console.log('datos para inventario', this.state.datos)
 
             //Actualizando el stock de los productos
               axios.post(process.env.REACT_APP_SERVER_URL + '/inventarios/update-stock',this.state.datos)
             .catch(err => console.log(err));
 
-            //Imprimiendo la factura
-            this.openPrintFactura(datos);
         })
         .catch(err => console.log(err));
+        
+        //Imprimiendo la factura
+        this.openPrintTicket(datos);
         
         const caja = {
             id: this.state.caja._id,
             ultimoVuelto: parseInt((datos.vuelto+"").replace(/\./gi,''))
         }
-        
+          
         //Guardando ultimo vuelto en caja
         await axios.post(process.env.REACT_APP_SERVER_URL + '/cajas/ultimoVuelto',caja)
             .catch(err => console.log(err));
@@ -151,34 +157,30 @@ export default class CajaDetallesList extends Component{
         this.setState({
             ultimo_vuelto: caja.ultimoVuelto,
             datos: []
-        })                
+        })
     }
 
-    
 
-    openPrintFactura = (datos) => {
+    openPrintTicket = (datos) => {
         return new Promise((resolve, reject) => {
 
             const table = document.createElement('table');
+            table.style.width = "200px";
+            table.style.fontSize = "10px";
             let headerRow = document.createElement('tr');
+
             let th = document.createElement('th');
             th.colSpan = 4;
+            th.style.fontSize = "14px";
+            th.style.textAlign = "center";
             th.textContent = datos.timbrado.nombreEmpresa;
             headerRow.appendChild(th);
             table.appendChild(headerRow);
 
-            /*
             headerRow = document.createElement('tr');
             th = document.createElement('td');
             th.colSpan = 4;
-            th.textContent = datos.timbrado.ruc;
-            headerRow.appendChild(th);
-            table.appendChild(headerRow);
-    */
-
-            headerRow = document.createElement('tr');
-            th.colSpan = 4;
-            th = document.createElement('td');
+            th.style.textAlign = "center";
             //th.textContent = "Comprobante #" + datos.timbrado.comprobante;
             th.textContent = "Comprobante #" + datos.timbrado.comprobante;
             headerRow.appendChild(th);
@@ -217,6 +219,7 @@ export default class CajaDetallesList extends Component{
         });
         
     }
+    
 
     datalistTotales(){
         let precio = 0;
@@ -288,3 +291,4 @@ export default class CajaDetallesList extends Component{
         )
     }
 }
+

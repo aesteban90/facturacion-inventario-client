@@ -17,6 +17,7 @@ import CajaConfigList from './components/caja-config/caja-config-list.component'
 import ClienteList from './components/clientes/cliente-list.component';
 import TimbradosList from './components/timbrados/timbrados-list.component';
 import CajaFacturasList from './components/caja-facturas/caja-facturas-list.component';
+import FacturaForm from './components/factura/factura-form.component';
 
 import Login from './components/login/login';
 import logout from './components/login/logout';
@@ -55,12 +56,9 @@ function App() {
 
   const menu = () => {
     if(currentUser){
-      console.log('User registrado', currentUser);
       if(currentUser.roles.includes('CAJERO')){
-        console.log('RETORNA CAJERO')
         return menu_cajero()
       }else if(currentUser.roles.includes('ADM')){
-        console.log('RETORNA ADM')
         return menu_admin()
       }
     }
@@ -80,6 +78,8 @@ function App() {
           <Route path='/Clientes' element={<ClienteList />} /> 
           <Route path='/Timbrados' element={<TimbradosList />} />                 
           <Route path='/CajaFacturas' exact element={<CajaFacturasList />} /> 
+          <Route path='/Factura' exact element={<FacturaForm />} /> 
+          
       </Routes>
     )
   }
@@ -90,6 +90,7 @@ function App() {
           <Route path='/Caja' element={<CajaList />} />
           <Route path='/CajaDetalles' element={<CajaDetallesList />} />
           <Route path='/CajaFacturas' exact element={<CajaFacturasList />} /> 
+          <Route path='/Factura' exact element={<FacturaForm />} /> 
       </Routes>
     )
   }
@@ -99,7 +100,7 @@ function App() {
         <div className="body-wrapper container-fluid p-0">  
           <UserContext.Provider value = { {currentUser} } >
             {
-              (window.location.href.indexOf('CajaDetalles') < 0) ? <Menu/>  : <NavbarTopMenu />           
+              (window.location.href.indexOf('CajaDetalles') < 0 && window.location.href.indexOf('Factura') < 0) && <Menu/>  
             }
             <BrowserRouter>
               { 

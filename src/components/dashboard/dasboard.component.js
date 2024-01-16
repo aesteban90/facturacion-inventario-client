@@ -39,12 +39,14 @@ export default class Dashboard extends Component{
     }
 
     changeDatosCargados = (selectedOption) =>{
-        if(selectedOption.label.indexOf("Dia")>-1){
-            this.reporteProductosPorDia(selectedOption.value)
-        }else if(selectedOption.label.indexOf("Mes")>-1){
-            this.reporteProductosPorMes(selectedOption.value)
-        }else if(selectedOption.label.indexOf("Año")>-1){
-            this.reporteProductosPorAnho(selectedOption.value)
+        if(selectedOption){
+            if(selectedOption.label.indexOf("Dia")>-1){
+                this.reporteProductosPorDia(selectedOption.value)
+            }else if(selectedOption.label.indexOf("Mes")>-1){
+                this.reporteProductosPorMes(selectedOption.value)
+            }else if(selectedOption.label.indexOf("Año")>-1){
+                this.reporteProductosPorAnho(selectedOption.value)
+            }
         }
     }
 
@@ -65,9 +67,7 @@ export default class Dashboard extends Component{
     }
 
      reportePorDia = () =>{
-        document.querySelector('#datepicker_dia').classList.remove('d-none')
-        document.querySelector('#datepicker_mes').classList.add('d-none')
-        
+        window.functionReportePorDia();
         let datosCargadosOptions = [];
         let datosCargadosSelected = {};
         let day = [];
@@ -110,9 +110,8 @@ export default class Dashboard extends Component{
     }
 
     reportePorMes = () =>{
-        document.querySelector('#datepicker_dia').classList.add('d-none')
-        document.querySelector('#datepicker_mes').classList.remove('d-none')
-
+        window.functionReportePorMes();
+        
         let datosCargadosOptions = [];
         let datosCargadosSelected = {};
         let month = [];
@@ -158,8 +157,8 @@ export default class Dashboard extends Component{
     }
     
     reportePorAnho = () =>{
-        document.querySelector('#datepicker_dia').classList.add('d-none')
-        document.querySelector('#datepicker_mes').classList.add('d-none')
+        //document.querySelector('#datepicker_dia').classList.add('d-none')
+        //document.querySelector('#datepicker_mes').classList.add('d-none')
 
         let datosCargadosOptions = [];
         let datosCargadosSelected = {};
@@ -196,8 +195,8 @@ export default class Dashboard extends Component{
 
     reporteProductosPorDia(daySelected){
         
-        document.querySelector('#datepicker_dia').classList.remove('d-none')
-        document.querySelector('#datepicker_mes').classList.add('d-none')
+        //document.querySelector('#datepicker_dia').classList.remove('d-none')
+        //document.querySelector('#datepicker_mes').classList.add('d-none')
         let containsData = false;
         let products = [];
         let totalesPerDay = [];
@@ -240,8 +239,9 @@ export default class Dashboard extends Component{
     }
 
     reporteProductosPorMes(monthSelected){
-        document.querySelector('#datepicker_dia').classList.remove('d-none')
-        document.querySelector('#datepicker_mes').classList.add('d-none')
+        //document.querySelector('#datepicker_dia').classList.remove('d-none')
+        //document.querySelector('#datepicker_mes').classList.add('d-none')
+
         let containsData = false;
         let products = [];
         let totalProductoPerMonth = 0;
@@ -284,8 +284,8 @@ export default class Dashboard extends Component{
     }
 
     reporteProductosPorAnho(yearSelected){
-        document.querySelector('#datepicker_dia').classList.remove('d-none')
-        document.querySelector('#datepicker_mes').classList.add('d-none')
+        //document.querySelector('#datepicker_dia').classList.remove('d-none')
+        //document.querySelector('#datepicker_mes').classList.add('d-none')
         let containsData = false;
         let products = [];
         let totalProductoPerYear = 0;
@@ -365,7 +365,7 @@ export default class Dashboard extends Component{
                                             onChange={this.onChangeReporteVentasFechaDia}                                                                                   
                                         /> 
                                     </div>
-                                    <div id='datepicker_mes' className="col-md-2 d-none">
+                                    <div id='datepicker_mes' className="col-md-2" style={{display: 'none'}}>
                                         <DatePicker                                             
                                             className="form-control" 
                                             locale="esp"

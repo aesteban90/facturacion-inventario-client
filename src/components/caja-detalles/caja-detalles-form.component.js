@@ -76,7 +76,7 @@ export default class CajaDetallesForm extends Component{
                 options.push({value:element,label:element.ruc+"-"+element.div +" "+element.razonsocial +" | CI:"+element.ruc.replace(/\./gi,'')});
             });
             this.setState({
-                clienteOptions: options,    
+                clienteOptions: options,     
                 clienteSelected: optiondefault,
                 ruc: optiondefault.value.ruc,
                 div: optiondefault.value.div,
@@ -97,7 +97,9 @@ export default class CajaDetallesForm extends Component{
             }else{
                 this.setState({inventarioSelected: {}, inventarioOptions: []});
             }
-        }).catch(err => console.log(err))        
+        }).catch(err => console.log(err)) 
+         
+        
     }
     onKeyPressBuscarCliente = (e) =>{       
         if (e.key === "-") {
@@ -150,7 +152,7 @@ export default class CajaDetallesForm extends Component{
     onChangeCodigoBarra = (e) => {
         this.setState({codigoBarra: e.target.value})
         let codigobarra = e.target.value;
-
+        
         if (codigobarra.length === 13){
             let cod_inv =  parseInt(codigobarra.substring(2,7));
             let indexInventario = undefined;
@@ -247,6 +249,7 @@ export default class CajaDetallesForm extends Component{
             user_updated: this.state.user_updated
         }
 
+        console.log("detalle", detalleCaja)
         axios.post(process.env.REACT_APP_SERVER_URL + '/cajas-detalles/add',detalleCaja)
             .then(res => this.showNotification(true))
             .catch(err => this.showNotification(false));
@@ -281,7 +284,7 @@ export default class CajaDetallesForm extends Component{
             user_created: this.state.user_created,
             user_updated: this.state.user_updated
         }
-
+        
         axios.post(process.env.REACT_APP_SERVER_URL + '/clientes/comprobar',clientes)
             .then(res => {
                 factura.cliente = res.data;

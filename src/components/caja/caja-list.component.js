@@ -32,7 +32,12 @@ export default class CajaList extends Component{
             .catch(err => console.log(err))
 
         //Pagina la lista
-        //window.paginar('list-group','list-group-item',true);
+        //
+
+        await new Promise(resolve => setTimeout(() => {
+            window.paginar('list-group','list-group-item',true);
+            resolve(false);
+        }, 500));
     }
 
     detallesFacturas = (dato) =>{
@@ -79,14 +84,14 @@ export default class CajaList extends Component{
                         <b>Cierre:</b> {dato.montoCierre && convertMiles(dato.montoCierre)+" Gs."}
                     </div>
                     {dato.estado === "Abierto" &&
-                        <div className="col-md-2">
+                        <div className="col-md-2 text-right">
                             <button onClick={() => this.detalles(dato)} type="button" className="btn btn-success btn-sm mr-1 mb-1">Detalles</button>
                             <button onClick={() => this.cerrarCaja(dato)} type="button" className="btn btn-danger btn-sm mr-1">Cerrar Caja</button>
                         </div>
                     }
                     {dato.estado === "Cerrado" &&
-                        <div className="col-md-2">
-                            <button onClick={() => this.detallesFacturas(dato)} type="button" className="btn btn-success btn-sm mr-1 mb-1">Facturas</button>
+                        <div className="col-md-2 text-right">
+                            <button onClick={() => this.detallesFacturas(dato)} type="button" className="btn btn-light btn-sm mr-1 mb-1">Facturas</button>
                         </div>
                     }
                 </li>)

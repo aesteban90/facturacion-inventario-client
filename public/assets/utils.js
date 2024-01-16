@@ -105,3 +105,24 @@ function calcularTotalesPagos(){
     $('.list-totales-pagos').html(convertMiles(totales) + " Gs.")                    
     
 }
+
+function functionReportePorDia(){
+    console.log("functionReportePorDia")
+    //document.querySelector('#datepicker_dia').classList.remove('d-none')
+    //document.querySelector('#datepicker_mes').classList.add('d-none')
+
+    //$( "#datepicker_dia" ).addClass( "d-none" );
+    //$( "#datepicker_dia" ).removeClass( "d-none" );
+
+    document.querySelector('#datepicker_dia').style.display = "inline";
+    document.querySelector('#datepicker_mes').style.display = "none";
+}
+
+function functionReportePorMes(){
+    console.log("functionReportePorMes")
+    document.querySelector('#datepicker_dia').style.display = "none";
+    document.querySelector('#datepicker_mes').style.display = "inline";
+
+    //$( "#datepicker_mes" ).addClass( "d-none" );
+    //$( "#datepicker_mes" ).removeClass( "d-none" );
+}

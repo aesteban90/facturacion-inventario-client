@@ -28,7 +28,11 @@ export default class ProveedorList extends Component{
             .catch(err => console.log(err))
 
         //Pagina la lista
-        window.paginar('list-group','list-group-item',true);
+       
+        await new Promise(resolve => setTimeout(() => {
+            window.paginar('list-group','list-group-item',true);
+            resolve(false);
+        }, 500));
     }
 
     componentDidMount(){      
