@@ -5,6 +5,7 @@ import Select from 'react-select';
 import { NumericFormat } from 'react-number-format';
 import { getDiv } from '../../utils/utils.js'
 
+
 export default class CajaDetallesForm extends Component{
     static contextType = UserContext;
     constructor(props){
@@ -112,7 +113,7 @@ export default class CajaDetallesForm extends Component{
             e.preventDefault();//Para que no cargue el key
             //Generar la factura e imprimir
 
-            //this.submitFactura()
+            //this.submitTicket()
             this.onSubtmitCliente(e);
         }
     }
@@ -154,18 +155,37 @@ export default class CajaDetallesForm extends Component{
         let codigobarra = e.target.value;
         
         if (codigobarra.length === 13){
-            let cod_inv =  parseInt(codigobarra.substring(2,7));
+            //verificando codigo de barra definido por el producto
+            let cod_inv =  parseInt(codigobarra);
+            let codigoBarraDefinido = false;
             let indexInventario = undefined;
             this.state.inventarioOptions.forEach((element, index) => {
                 let codigo = parseInt(element.codigo);
                 if( codigo === cod_inv){
                     indexInventario = index;
+                    codigoBarraDefinido = true;
                     return false;
                 }
             })
+
+            if(!indexInventario){
+                //verificando codigo de barra propio
+                cod_inv =  parseInt(codigobarra.substring(2,7));
+                indexInventario = undefined;
+                this.state.inventarioOptions.forEach((element, index) => {
+                    let codigo = parseInt(element.codigo);
+                    if( codigo === cod_inv){
+                        indexInventario = index;
+                        return false;
+                    }
+                })
+            }
+
             //Si encuentra el producto en el inventario
             if(indexInventario){
-                let cantidad =  parseInt(codigobarra.substring(7,12)) / 1000;
+                let cantidad = 1;
+                if(!codigoBarraDefinido) cantidad = parseInt(codigobarra.substring(7,12)) / 1000;
+                
                 let inventario = this.state.inventarioOptions[indexInventario];
                 let precio = inventario.precio;
                 let total = parseInt(inventario.precio * cantidad);
@@ -249,7 +269,7 @@ export default class CajaDetallesForm extends Component{
             user_updated: this.state.user_updated
         }
 
-        console.log("detalle", detalleCaja)
+        //console.log("detalle", detalleCaja)
         axios.post(process.env.REACT_APP_SERVER_URL + '/cajas-detalles/add',detalleCaja)
             .then(res => this.showNotification(true))
             .catch(err => this.showNotification(false));
@@ -288,14 +308,20 @@ export default class CajaDetallesForm extends Component{
         axios.post(process.env.REACT_APP_SERVER_URL + '/clientes/comprobar',clientes)
             .then(res => {
                 factura.cliente = res.data;
-                this.submitFactura(factura)
+                this.submitTicket(factura)
             })
             .catch(err => console.log(err));
         
     }   
 
-    submitFactura = (factura) =>{
-        this.props.onParentPrintFactura(factura);
+    submitTicket = (factura) =>{
+        this.props.onParentPrintTicket(factura);
+
+        this.setState({
+            pagamiento_recibido:'',
+            pagamiento_total:'',
+            pagamiento_vuelto:''
+        })   
 
         document.querySelector('#PanelProductos').classList.remove("d-none");
         document.querySelector('#PanelVueltos').classList.add("d-none");
@@ -417,6 +443,10 @@ export default class CajaDetallesForm extends Component{
             <div id="PanelCliente" className="container d-none">                 
                 <form onSubmit={this.onSubtmitCliente}>
                     <div className="row">
+                         
+                        <hr className="solid"></hr>         
+                        <h3>Cliente</h3>            
+                        <div className="row">
                         <div className="form-group col-md-12">
                             <label>Buscar Cliente Registrado: </label>
                             <Select           
@@ -428,10 +458,7 @@ export default class CajaDetallesForm extends Component{
                                 onChange={this.onChangeCliente}  
                                 onKeyDown={this.onKeyPressBuscarCliente}                      
                                 required/>
-                        </div>   
-                        <hr className="solid"></hr>         
-                        <h3>Cliente</h3>            
-                        <div className="row">
+                        </div>
                         <div className="form-group col-md-6">
                             <label>Ruc: </label>
                             <NumericFormat 
@@ -463,7 +490,9 @@ export default class CajaDetallesForm extends Component{
                         </div> 
                         </div>     
                     </div>                      
-
+                    <div className="form-group">
+                        <button type="button" className="btn btn-success">Imprimir Factura</button>
+                    </div>
                     <div className="form-group d-none">
                         <button type="submit" className="btn btn-warning"></button>
                     </div>                                

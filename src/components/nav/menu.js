@@ -28,7 +28,7 @@ const Menu = (props) =>{
                             <NavBarItem icon={faUsers} name="Clientes" path="/Clientes" /> 
                             <NavBarItem icon={faTruck} name="Proveedores" path="/Proveedores" /> 
                             <NavBarItem icon={faCartShopping} name="Compras" path="/Compras" /> 
-                            {/* <NavBarItem icon={faBoxesStacked} name="Cajas" path="/CajasConfig" />  */}
+                            <NavBarItem icon={faBoxesStacked} name="Cajas" path="/CajasConfig" />
                             <NavBarItem icon={faUserGear} name="Usuarios" path="/Usuarios" /> 
                             <NavBarItem icon={faWarehouse} name="Timbrados" path="/Timbrados" /> 
                         </NavBarItemFolder>

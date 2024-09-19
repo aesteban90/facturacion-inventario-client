@@ -15,6 +15,7 @@ export default class InventarioForm extends Component{
             cantidad: '0',
             precio_costo: '0',
             precio_venta: '0',
+            notificar_cantidad_minima: '0',
             user_created: '',
             user_updated: '',
             textButton:'Crear',
@@ -38,6 +39,7 @@ export default class InventarioForm extends Component{
                     this.setState({
                         codigo: response.data.codigo,    
                         descripcion: response.data.descripcion,   
+                        notificar_cantidad_minima: response.data.notificar_cantidad_minima,
                         cantidad: response.data.cantidad,   
                         precio_costo: response.data.precio_costo,   
                         precio_venta: response.data.precio_venta,
@@ -50,6 +52,7 @@ export default class InventarioForm extends Component{
                 this.setState({
                     codigo:'',
                     descripcion:'',
+                    notificar_cantidad_minima:'0',
                     cantidad: '0',
                     precio_costo: '0',
                     precio_venta: '0',
@@ -66,6 +69,7 @@ export default class InventarioForm extends Component{
     onChangePrecioCosto = (e) => {this.setState({precio_costo: e.target.value})}
     onChangePrecioVenta = (e) => {this.setState({precio_venta: e.target.value})}
     onChangeCantidad = (e) => {this.setState({cantidad: e.target.value})}  
+    onChangeNotificarCantidadMinima = (e) => {this.setState({notificar_cantidad_minima: e.target.value})}
 
     showNotification(isSuccess){
         document.querySelector('#alert').classList.replace('hide','show');
@@ -96,6 +100,7 @@ export default class InventarioForm extends Component{
                 cantidad: parseInt(this.state.cantidad.replace(/\./gi,'')),
                 precio_costo: parseInt(this.state.precio_costo.replace(/\./gi,'')),
                 precio_venta: parseInt(this.state.precio_venta.replace(/\./gi,'')),
+                notificar_cantidad_minima: parseInt(this.state.notificar_cantidad_minima.replace(/\./gi,'')),
                 user_created: this.state.user_created,
                 user_updated: this.state.user_updated
             }
@@ -111,6 +116,7 @@ export default class InventarioForm extends Component{
                     cantidad: '0',
                     precio_costo: '0',
                     precio_venta: '0',
+                    notificar_cantidad_minima: '0',
                     textButton:'Crear',
                     titleForm: 'Crear Inventario',
                     idUpdate:'NEW'
@@ -121,6 +127,7 @@ export default class InventarioForm extends Component{
                 codigo: this.state.codigo,
                 descripcion: this.state.descripcion,
                 cantidad: this.state.cantidad && parseInt((this.state.cantidad+"").replace(/\./gi,'')),
+                notificar_cantidad_minima: this.state.notificar_cantidad_minima && parseInt((this.state.notificar_cantidad_minima+"").replace(/\./gi,'')),
                 precio_costo: this.state.precio_costo && parseInt((this.state.precio_costo+"").replace(/\./gi,'')),
                 precio_venta: parseInt((this.state.precio_venta+"").replace(/\./gi,'')),
                 user_updated: this.state.user_updated
@@ -139,13 +146,27 @@ export default class InventarioForm extends Component{
                 <h3>{this.state.titleForm}</h3>
                 <form onSubmit={this.onSubtmit}>
                         <div className="row">
+                            <div className="form-group col-md-12 bd-callout bd-callout-info">
+                                <h4 id="data-attributes-for-individual-tooltips">Informaciones para el Registro</h4>
+                                <p>Para registrar un producto propio colocar solo hasta <b>5 caracteres de numeros</b>, para los demas solo registrar con el lector de codigo de barras.</p>
+                                Ejemplos:
+                                <ul className='pl-4'>
+                                    <li>
+                                        Codigo Propio: 12345
+                                    </li>
+                                    <li>
+                                        Codigo definido del producto: 75489654213547
+                                    </li>
+                                </ul>
+                                    
+                            </div>
                             <div className="form-group col-md-12">
-                                <label>Codigo Barra (Requerido 5 caracteres): </label>
+                                <label>Codigo Barra : </label>
                                 <input type="text" 
                                     autoFocus={true}
                                     ref={c => (this._input = c)}
-                                    required
-                                    maxLength={5} 
+                                    maxLength={13} 
+                                    required 
                                     className="form-control"
                                     value={this.state.codigo}
                                     onChange={this.onChangeCodigo}
@@ -159,7 +180,16 @@ export default class InventarioForm extends Component{
                                     value={this.state.descripcion}
                                     onChange={this.onChangeDescripcion} 
                                 />
-                            </div>                                                       
+                            </div>      
+                            <div className="form-group col-md-12">
+                                <label>Notificar en cantidad minima: </label>
+                                <input type="text" 
+                                    required
+                                    className="form-control"
+                                    value={this.state.notificar_cantidad_minima}
+                                    onChange={this.onChangeNotificarCantidadMinima}                                     
+                                />
+                            </div>                                                 
                             <div className="form-group col-md-4">
                                 <label>Cantidad: </label>
                                 <NumericFormat 

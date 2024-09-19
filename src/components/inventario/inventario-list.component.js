@@ -22,7 +22,7 @@ export default class InventarioList extends Component{
         
         await axios.get(process.env.REACT_APP_SERVER_URL + "/inventarios/")
             .then(response => {
-                console.log(response.data)
+                //console.log(response.data)
                 this.setState({
                     datos: response.data,
                     loading: false

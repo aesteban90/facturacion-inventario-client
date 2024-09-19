@@ -1,8 +1,7 @@
 import './App.css';
 import { useState } from 'react';
 import { Menu } from './components/nav/menu';
-import { NavbarTopMenu } from './components/nav/navbar-top';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route} from 'react-router-dom';
 import { UserContext } from './UserContext';
 import './utils/registerLocaleEsp';
 
@@ -18,6 +17,7 @@ import ClienteList from './components/clientes/cliente-list.component';
 import TimbradosList from './components/timbrados/timbrados-list.component';
 import CajaFacturasList from './components/caja-facturas/caja-facturas-list.component';
 import FacturaForm from './components/factura/factura-form.component';
+import FacturaImpresion from './components/factura/factura-impresion';
 
 import Login from './components/login/login';
 import logout from './components/login/logout';
@@ -65,33 +65,36 @@ function App() {
   }
 
   const menu_admin = () => {
-    return (
+    return (      
       <Routes>
-          <Route path='/Dashboard' element={<Dashboard />} />
-          <Route path='/Caja' element={<CajaList />} />
-          <Route path='/CajaDetalles' element={<CajaDetallesList />} />
-          <Route path='/Usuarios' element={<UsuariosList />} />
-          <Route path='/Inventario' element={<InventarioList />} /> 
-          <Route path='/Compras' element={<ComprasList />} /> 
-          <Route path='/Proveedores' element={<ProveedoresList />} />     
-          <Route path='/CajasConfig' element={<CajaConfigList />} /> 
-          <Route path='/Clientes' element={<ClienteList />} /> 
-          <Route path='/Timbrados' element={<TimbradosList />} />                 
-          <Route path='/CajaFacturas' exact element={<CajaFacturasList />} /> 
-          <Route path='/Factura' exact element={<FacturaForm />} /> 
-          
-      </Routes>
+        <Route path='/Dashboard' element={<Dashboard />} />
+        <Route path='/Caja' element={<CajaList />} />
+        <Route path='/CajaDetalles' element={<CajaDetallesList />} />
+        <Route path='/Usuarios' element={<UsuariosList />} />
+        <Route path='/Inventario' element={<InventarioList />} /> 
+        <Route path='/Compras' element={<ComprasList />} /> 
+        <Route path='/Proveedores' element={<ProveedoresList />} />     
+        <Route path='/CajasConfig' element={<CajaConfigList />} /> 
+        <Route path='/Clientes' element={<ClienteList />} /> 
+        <Route path='/Timbrados' element={<TimbradosList />} />                 
+        <Route path='/CajaFacturas' exact element={<CajaFacturasList />} /> 
+        <Route path='/Factura' exact element={<FacturaForm />} /> 
+        <Route path='/FacturaImpresion' exact element={<FacturaImpresion />} /> 
+        
+    </Routes>
     )
   }
   const menu_cajero = () => {
     return (
       <Routes>
-          <Route path='/Dashboard' element={<Dashboard />} />
-          <Route path='/Caja' element={<CajaList />} />
-          <Route path='/CajaDetalles' element={<CajaDetallesList />} />
-          <Route path='/CajaFacturas' exact element={<CajaFacturasList />} /> 
-          <Route path='/Factura' exact element={<FacturaForm />} /> 
-      </Routes>
+        <Route path='/Dashboard' element={<Dashboard />} />
+        <Route path='/Caja' element={<CajaList />} />
+        <Route path='/CajaDetalles' element={<CajaDetallesList />} />
+        <Route path='/CajaFacturas' exact element={<CajaFacturasList />} /> 
+        <Route path='/Factura' exact element={<FacturaForm />} /> 
+        <Route path='/FacturaImpresion' exact element={<FacturaImpresion />} /> 
+    </Routes>
+      
     )
   }
 
@@ -102,12 +105,11 @@ function App() {
             {
               (window.location.href.indexOf('CajaDetalles') < 0 && window.location.href.indexOf('Factura') < 0) && <Menu/>  
             }
-            <BrowserRouter>
-              { 
-                menu()
-              }      
-              
-            </BrowserRouter>
+
+            <Router>
+                { menu() }
+            </Router>
+
           </UserContext.Provider> 
         </div>
       </div>
