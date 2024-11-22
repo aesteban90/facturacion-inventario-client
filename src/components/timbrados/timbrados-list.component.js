@@ -93,7 +93,7 @@ export default class TimbradosList extends Component{
                     </div>
                 </li>)
         })
-    }
+    } 
     render(){       
         return(
             <div className="content-wrapper" id="content">
