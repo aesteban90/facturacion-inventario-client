@@ -150,10 +150,10 @@ export default class CajaDetallesList extends Component{
         .catch(err => console.log(err));
         
         //Imprimiendo el ticket
-        this.openPrintTicket(datos);
+        //this.openPrintTicket(datos);
         
         //Imprimiendo la factura
-        //this.openPrintFactura(datos);
+        this.openPrintFactura(datos);
 
         const caja = {
             id: this.state.caja._id,
@@ -322,6 +322,11 @@ export default class CajaDetallesList extends Component{
     openPrintFactura = (datos) => {
         return new Promise((resolve, reject) => {
 
+            console.log('datos', datos);
+            let total = parseInt(datos.total)
+            let iva_10_valor = convertMiles( total / 11);
+            let iva_total_valor = iva_10_valor;
+
             const div_a4_sheet = document.createElement('div');
             const c1_contenido = document.createElement('table');
             const c1_contado = document.createElement('div');
@@ -381,23 +386,23 @@ export default class CajaDetallesList extends Component{
             c1_fecha_emision.textContent = `${dia}/${mes}/${anio}`;
             c1_ruc.textContent = datos.cliente.ruc;
             c1_razon_social.textContent = datos.cliente.razonsocial;
-            c1_subtotales_5.textContent = "999.999";
-            c1_subtotales_10.textContent = "999.999";
-            c1_total_pagar.textContent = "999.999";
-            c1_iva_5.textContent = "999.999";
-            c1_iva_10.textContent = "999.999";
-            c1_iva_total.textContent = "999.999";
+            c1_subtotales_5.textContent = "subtotales_5";
+            c1_subtotales_10.textContent = "subtotales_10";
+            c1_total_pagar.textContent = datos.total;
+            c1_iva_5.textContent = "iva_5";
+            c1_iva_10.textContent = iva_10_valor;
+            c1_iva_total.textContent = iva_total_valor;
 
             c2_contado.textContent = "X";
             c2_fecha_emision.textContent = `${dia}/${mes}/${anio}`;
             c2_ruc.textContent = datos.cliente.ruc;
             c2_razon_social.textContent = datos.cliente.razonsocial;
-            c2_subtotales_5.textContent = "999.999";
-            c2_subtotales_10.textContent = "999.999";
-            c2_total_pagar.textContent = "999.999";
-            c2_iva_5.textContent = "999.999";
-            c2_iva_10.textContent = "999.999";
-            c2_iva_total.textContent = "999.999";
+            c2_subtotales_5.textContent = "subtotales_5";
+            c2_subtotales_10.textContent = "subtotales_10";
+            c2_total_pagar.textContent = datos.total;
+            c2_iva_5.textContent = "iva_5";
+            c2_iva_10.textContent = iva_10_valor;
+            c2_iva_total.textContent = iva_total_valor;
 
             div_a4_sheet.appendChild(c1_contado);
             div_a4_sheet.appendChild(c1_fecha_emision);
@@ -432,7 +437,7 @@ export default class CajaDetallesList extends Component{
                     row.appendChild(td);
                 });
                 c1_contenido.appendChild(row);
-                c2_contenido.appendChild(row);   
+                //c2_contenido.appendChild(row);   
             });
 
             div_a4_sheet.appendChild(c1_contenido);
@@ -443,7 +448,7 @@ export default class CajaDetallesList extends Component{
             const printWindow = window.open('', 'Print', 'height=600,width=800');
             printWindow.document.write(div_a4_sheet.outerHTML);
             printWindow.document.write(`
-            body{margin:0;padding:0;box-sizing:border-box}.a4_sheet{height:210mm;width:297mm;padding:20mm;position:relative;background-color:#fff}
+            <style>body{margin:0;padding:0;box-sizing:border-box}.a4_sheet{height:210mm;width:297mm;padding:20mm;position:relative;background-color:#fff}
             .positioned_element{position:absolute;font-size:12px}.c1_contado_x{top:43mm;left:122mm;width:4mm}.c2_contado_x{top:43mm;left:262mm;width:4mm}
             .c1_fecha_emision{top:43mm;left:38mm;width:130mm}.c1_ruc{top:48mm;left:24mm;width:40mm}.c1_razon_social{top:53mm;left:47mm;width:95mm}
             .c2_fecha_emision{top:43mm;left:180mm;width:130mm}.c2_ruc{top:48mm;left:165mm;width:40mm}.c2_razon_social{top:53mm;left:188mm;width:95mm}
@@ -455,7 +460,7 @@ export default class CajaDetallesList extends Component{
             .c2_iva_5{top:186mm;left:188mm}.c2_iva_10{top:186mm;left:211mm}.c2_iva_total{top:186mm;left:241mm;width:30mm}
             table tr td:first-child{width:12mm;padding-right:1mm}table td:nth-child(2){padding-left:1mm;width:40mm}table tr td:nth-child(3){width:13mm}
             table tr td:nth-child(6){width:18mm}table tr td:first-child,table tr td:nth-child(3),table tr td:nth-child(4),table tr td:nth-child(5),
-            table tr td:nth-child(6){text-align:right}
+            table tr td:nth-child(6){text-align:right}</style>
             `)
 
             printWindow.print();
