@@ -150,10 +150,10 @@ export default class CajaDetallesList extends Component{
         .catch(err => console.log(err));
         
         //Imprimiendo el ticket
-        //this.openPrintTicket(datos);
+        this.openPrintTicket(datos);
         
         //Imprimiendo la factura
-        this.openPrintFactura(datos);
+        //this.openPrintFactura(datos);
 
         const caja = {
             id: this.state.caja._id,
@@ -203,20 +203,22 @@ export default class CajaDetallesList extends Component{
             
             let totalCompra = 0;
             this.state.datos.forEach(record => {                
-                const row = document.createElement('tr');
+                const row1 = document.createElement('tr');
                 const { inventario, cantidad, precio, total } = record;
                 const data = [convertMiles(cantidad), convertMiles(precio), convertMiles(total)]
                 totalCompra += total;
 
                 let td = document.createElement('td');
-                td.innerHTML = "# "+inventario.descripcion + "<br><br>";
-                row.appendChild(td);
+                td.innerHTML = "# "+inventario.descripcion;
+                row1.appendChild(td);
                 
+                const row2 = document.createElement('tr');
                 td = document.createElement('td');
                 td.innerHTML = convertMiles(cantidad) + " X " + convertMiles(precio) + " = " +  convertMiles(total) + "<br />";
-                row.appendChild(td);
+                row2.appendChild(td);
                 
-                table.appendChild(row);
+                table.appendChild(row1);
+                table.appendChild(row2);
             });
 
             headerRow = document.createElement('tr');
@@ -255,7 +257,7 @@ export default class CajaDetallesList extends Component{
             printWindow.document.write(table.outerHTML);
             printWindow.print();
 
-            resolve(printWindow.close());            
+           // resolve(printWindow.close());            
         });
         
     }
