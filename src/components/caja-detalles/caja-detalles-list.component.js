@@ -257,7 +257,7 @@ export default class CajaDetallesList extends Component{
             printWindow.document.write(table.outerHTML);
             printWindow.print();
 
-           // resolve(printWindow.close());            
+            resolve(printWindow.close());            
         });
         
     }
