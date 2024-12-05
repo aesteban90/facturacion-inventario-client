@@ -13,7 +13,8 @@ export default class InventarioList extends Component{
             datos: [],
             loading: true,
             idUpdate: '',
-            didUpdate: true
+            didUpdate: true,
+            tipoImpuestoOptions: []
         }
         this.datalist = this.datalist.bind(this);
     }
@@ -22,7 +23,7 @@ export default class InventarioList extends Component{
         
         await axios.get(process.env.REACT_APP_SERVER_URL + "/inventarios/")
             .then(response => {
-                //console.log(response.data)
+                console.log(response.data)
                 this.setState({
                     datos: response.data,
                     loading: false
@@ -34,14 +35,20 @@ export default class InventarioList extends Component{
             window.paginar('list-group','list-group-item',true);
             resolve(false);
         }, 500));
+
+        let options = [];
+        options.push({value:0,label:"IVA 10%",class: "badge-success"});
+        options.push({value:1,label:"IVA 5%",class: "badge-warning"});
+        options.push({value:2,label:"Excentas",class: "badge-light"});
+
+        this.setState({tipoImpuestoOptions: options});        
+
     }
 
     componentDidMount(){this.updateList()}
     componentDidUpdate(){}
 
     deleteData = async (jsondatos) => {
-
-        console.log('delete',jsondatos._id)
         await axios.delete(process.env.REACT_APP_SERVER_URL + "/inventarios/"+jsondatos._id)
             .then(res => {
                 console.log('res', res.data)
@@ -60,6 +67,7 @@ export default class InventarioList extends Component{
     createData = (id) => {this.setState({idUpdate: id})}
 
     datalist(){
+        
         return this.state.datos.map(dato => {
             return (
                 <li className="list-group-item" key={dato._id}>
@@ -69,7 +77,12 @@ export default class InventarioList extends Component{
                             <b> Actualidado por: </b>{dato.user_updated}
                         </span>
                     </div>
-                    <div className="col-md-3">{dato.descripcion}</div>
+                    <div className="col-md-3">{dato.descripcion} 
+                        <br />
+                        <span class={`p-2 badge ${this.state.tipoImpuestoOptions[dato.tipoImpuesto] && this.state.tipoImpuestoOptions[dato.tipoImpuesto].class } `}> 
+                        {this.state.tipoImpuestoOptions[dato.tipoImpuesto] && this.state.tipoImpuestoOptions[dato.tipoImpuesto].label }</span>
+                        
+                    </div>
                     <div className="col-md-3 details-consumision">
                         <b>Cantidad:</b> <span>{convertMiles(dato.cantidad)}</span><br/>
                         <b>Costo:</b> <span>{convertMiles(dato.precio_costo)} Gs.</span><br />

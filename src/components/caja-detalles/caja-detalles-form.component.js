@@ -92,7 +92,7 @@ export default class CajaDetallesForm extends Component{
             options.push({value:'undefined',label:'', codigo: '', precio: 0})
             if(response.data.length > 0 ){
                 response.data.forEach(element => {
-                    options.push({value:element._id,label:element.descripcion, codigo: element.codigo, precio: element.precio_venta})
+                    options.push({value:element._id,label:element.descripcion, codigo: element.codigo, precio: element.precio_venta, tipoImpuesto: element.tipoImpuesto})
                 });
                 this.setState({inventarioSelected: options[0], inventarioOptions: options});
             }else{
@@ -310,8 +310,7 @@ export default class CajaDetallesForm extends Component{
                 factura.cliente = res.data;
                 this.submitTicket(factura)
             })
-            .catch(err => console.log(err));
-        
+            .catch(err => console.log(err));        
     }   
 
     submitTicket = (factura) =>{
@@ -491,7 +490,7 @@ export default class CajaDetallesForm extends Component{
                         </div>     
                     </div>                      
                     <div className="form-group">
-                        <button type="button" className="btn btn-success">Imprimir Factura</button>
+                        <button type="button" onClick={() => this.irCajas()} className="btn btn-success">Imprimir Factura</button>
                     </div>
                     <div className="form-group d-none">
                         <button type="submit" className="btn btn-warning"></button>

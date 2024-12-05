@@ -67,6 +67,7 @@ function App() {
   const menu_admin = () => {
     return (      
       <Routes>
+        <Route path='/' element={<Dashboard />} />
         <Route path='/Dashboard' element={<Dashboard />} />
         <Route path='/Caja' element={<CajaList />} />
         <Route path='/CajaDetalles' element={<CajaDetallesList />} />
@@ -87,7 +88,7 @@ function App() {
   const menu_cajero = () => {
     return (
       <Routes>
-        <Route path='/Dashboard' element={<Dashboard />} />
+        <Route path='/' element={<CajaList />} />
         <Route path='/Caja' element={<CajaList />} />
         <Route path='/CajaDetalles' element={<CajaDetallesList />} />
         <Route path='/CajaFacturas' exact element={<CajaFacturasList />} /> 

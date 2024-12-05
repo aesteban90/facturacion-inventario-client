@@ -41,6 +41,7 @@ export default class CajaDetallesList extends Component{
         await axios.get(process.env.REACT_APP_SERVER_URL + "/cajas-detalles/estado/"+id+"/Agregado")
         //await axios.get(process.env.REACT_APP_SERVER_URL + "/cajas-detalles/estado/"+id+"/Facturado")
             .then(response => {
+                console.log("response detalles", response.data)
                 this.setState({
                     datos: response.data,
                     loading: false
@@ -52,9 +53,6 @@ export default class CajaDetallesList extends Component{
     }
 
     componentDidMount(){
-
-        
-
         document.querySelector('.content-wrapper').style.marginLeft = "5px";
         this.updateList(); //Obteniendo los Detalles Caja
 
@@ -63,12 +61,10 @@ export default class CajaDetallesList extends Component{
 
     getCaja = async () => {
         const queryParameters = new URLSearchParams(window.location.search);
-        const id = queryParameters.get("id");
-        console.log('id',id)
+        const id = queryParameters.get("id");        
         await axios.get(process.env.REACT_APP_SERVER_URL  + "/cajas/"+id)
             .then(response => {
-                const caja = response.data;
-                console.log('caja',caja);
+                const caja = response.data;        
                 this.setState({
                     caja, ultimo_vuelto: caja.ultimoVuelto
                 })                  
@@ -88,26 +84,6 @@ export default class CajaDetallesList extends Component{
 
     updateData = (jsondatos) => {this.setState({idUpdate: jsondatos._id})}
     createData = (id) => {this.setState({idUpdate: id})}
-
-    datalist(){
-        return this.state.datos.map((dato, index) => {            
-            return (
-                <li className="list-productos list-group-item" key={dato._id}>
-                    <div className="col-md-4">
-                        {(index+1) + "- "+dato.inventario.descripcion}
-                    </div>
-                    <div className="col-md-2 text-right">{convertMiles(dato.cantidad)}</div>
-                    <div className="col-md-2 text-right">{convertMiles(dato.precio)}</div>
-                    <div className="col-md-2 text-right">{convertMiles(dato.total)}</div>
-                    <div className="col-md-2 text-right">
-                        {/* <button onClick={() => this.updateData(dato)} type="button" className="btn btn-light btn-sm mr-1"><FontAwesomeIcon icon={faEdit} /></button> */}
-                        <button onClick={() => this.deleteData(dato)} type="button" className="btn btn-danger btn-sm"><FontAwesomeIcon icon={faTrash} /></button>
-                    </div>
-                </li>)
-        })
-    }
-
-    
 
     printTicket = async (datos) => {       
         const factura = {
@@ -472,24 +448,52 @@ export default class CajaDetallesList extends Component{
         
     }
     
-
+    datalist(){
+        return this.state.datos.map((dato, index) => {    
+            return (
+                <li className="list-productos list-group-item" key={dato._id}>
+                    <div className="col-md-3">
+                        {(index+1) + "- "+dato.inventario.descripcion}
+                    </div>
+                    <div className="col-md-1 text-right">{convertMiles(dato.cantidad)}</div>
+                    <div className="col-md-1 text-right">{convertMiles(dato.precio)}</div>
+                    <div className="col-md-2 text-right">{dato.inventario.tipoImpuesto == 2 && convertMiles(dato.total)}</div>{/* Excentas*/}
+                    <div className="col-md-2 text-right">{dato.inventario.tipoImpuesto == 1 && convertMiles(dato.total)}</div>{/* IVA 5%*/}
+                    <div className="col-md-2 text-right">{dato.inventario.tipoImpuesto == 0 && convertMiles(dato.total)}</div>{/* IVA 10%*/}
+                    <div className="col-md-1 text-right">
+                        {/* <button onClick={() => this.updateData(dato)} type="button" className="btn btn-light btn-sm mr-1"><FontAwesomeIcon icon={faEdit} /></button> */}
+                        <button onClick={() => this.deleteData(dato)} type="button" className="btn btn-danger btn-sm"><FontAwesomeIcon icon={faTrash} /></button>
+                    </div>
+                </li>)
+        })
+    }
     datalistTotales(){
         let precio = 0;
         let total = 0;
+        let subtotal_excentas = 0;
+        let subtotal_iva5 = 0;
+        let subtotal_iva10 = 0;
         let cantidad = 0;
         this.state.datos.map((dato) => {    
             cantidad += dato.cantidad;
             precio += dato.precio;
             total += dato.total ;
+            if(dato.inventario.tipoImpuesto == 0) subtotal_iva10 += dato.total;
+            if(dato.inventario.tipoImpuesto == 1) subtotal_iva5 += dato.total;
+            if(dato.inventario.tipoImpuesto == 2) subtotal_excentas += dato.total;
         })
         
         
         return (
             <div className="card-footer font-weight-bold">     
                 <div className="row">
-                    <div className="col-md-4 text-right">Totales</div>
-                    <div className="col-md-2 text-right">{convertMiles(cantidad)}</div>
-                    <div className="col-md-2 text-right">{convertMiles(precio)}</div>
+                    <div className="col-md-5 text-right">Sub-Totales</div>
+                    <div id="subtotal_excentas" className="col-md-2 text-right">{convertMiles(subtotal_excentas)}</div>
+                    <div id="subtotal_iva5" className="col-md-2 text-right">{convertMiles(subtotal_iva5)}</div>
+                    <div id="subtotal_iva10" className="col-md-2 text-right">{convertMiles(subtotal_iva10)}</div>
+                </div>
+                <div className="row h4 text-success">
+                    <div className="col-md-9 text-right">Total a Pagar</div>                    
                     <div id="totales_total" className="col-md-2 text-right">{convertMiles(total)}</div>
                 </div>
             </div>
@@ -513,11 +517,13 @@ export default class CajaDetallesList extends Component{
                         <div className="card">                            
                             <div className="card-header">                                
                                 <div className="card-title row mb-0">  
-                                    <div className="col-md-4"># - Decripcion</div>
-                                    <div className="col-md-2 text-right">Cantidad</div>
-                                    <div className="col-md-2 text-right">Precio</div>
-                                    <div className="col-md-2 text-right">Total</div>
-                                    <div className="col-md-2 text-right">
+                                    <div className="col-md-3"># - Decripcion</div>
+                                    <div className="col-md-1 text-right">Cantidad</div>
+                                    <div className="col-md-1 text-right">Precio</div>
+                                    <div className="col-md-2 text-right">Excentas</div>
+                                    <div className="col-md-2 text-right">5%</div>
+                                    <div className="col-md-2 text-right">10%</div>
+                                    <div className="col-md-1 text-right">
                                         {/* <button onClick={() => this.createData("NEW")} type="button" className="btn btn-warning btn-sm"><FontAwesomeIcon icon={faPlus} /> Nuevo</button> */}
                                     </div>                                 
                                 </div>

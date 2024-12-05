@@ -4,6 +4,7 @@ import UserContext  from '../../UserContext';
 import { NumericFormat } from 'react-number-format';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import Select from 'react-select';
 
 export default class InventarioForm extends Component{
     static contextType = UserContext;
@@ -16,8 +17,10 @@ export default class InventarioForm extends Component{
             precio_costo: '0',
             precio_venta: '0',
             notificar_cantidad_minima: '0',
+            tipoImpuestoOptions: [],
+            tipoImpuestoSelected: {},
             user_created: '',
-            user_updated: '',
+            user_updated: '',            
             textButton:'Crear',
             titleForm: 'Crear Inventario',
             idUpdate: 'NEW'
@@ -27,6 +30,14 @@ export default class InventarioForm extends Component{
      componentDidMount(){
         const currentUser = this.context.currentUser;
         this.setState({user_created: currentUser.name, user_updated: currentUser.name}) 
+
+        let options = [];
+        options.push({value:0,label:"IVA 10%"});
+        options.push({value:1,label:"IVA 5%"});
+        options.push({value:2,label:"Excentas"});
+
+        this.setState({user_created: currentUser.name, user_updated: currentUser.name, tipoImpuestoOptions: options}) 
+        
     }
 
     //Metodo que obtiene cualquier actualizacion de otros componentes donde fue llamado
@@ -36,6 +47,7 @@ export default class InventarioForm extends Component{
             if(this.props.idUpdate !== "NEW" && this.props.idUpdate !== "" ){
                 axios.get(process.env.REACT_APP_SERVER_URL + "/inventarios/"+this.props.idUpdate)
                 .then(response => {
+                    console.log("INVENTARIO", response.data)
                     this.setState({
                         codigo: response.data.codigo,    
                         descripcion: response.data.descripcion,   
@@ -43,9 +55,12 @@ export default class InventarioForm extends Component{
                         cantidad: response.data.cantidad,   
                         precio_costo: response.data.precio_costo,   
                         precio_venta: response.data.precio_venta,
+                        tipoImpuestoSelected: this.state.tipoImpuestoOptions[response.data.tipoImpuesto],
                         textButton:'Editar',
                         titleForm: 'Editar Inventario'
                     })
+
+                    console.log('state',this.state)
                 })
                 .catch(err => console.log(err));
             }else{
@@ -56,6 +71,7 @@ export default class InventarioForm extends Component{
                     cantidad: '0',
                     precio_costo: '0',
                     precio_venta: '0',
+                    tipoImpuestoSelected: {},
                     textButton:'Crear',
                     titleForm: 'Crear Inventario',
                     idUpdate: this.props.idUpdate
@@ -90,6 +106,9 @@ export default class InventarioForm extends Component{
     handleCloseAlert = () =>{
         document.querySelector('#alert').classList.replace('show','hide');
     }
+
+  
+    onChangeTipoImpuesto = (selectedOption) => {this.setState({tipoImpuestoSelected: selectedOption})}
     
     onSubtmit = (e) => {
         e.preventDefault();
@@ -100,6 +119,7 @@ export default class InventarioForm extends Component{
                 cantidad: parseInt(this.state.cantidad.replace(/\./gi,'')),
                 precio_costo: parseInt(this.state.precio_costo.replace(/\./gi,'')),
                 precio_venta: parseInt(this.state.precio_venta.replace(/\./gi,'')),
+                tipoImpuesto: this.state.tipoImpuestoSelected.value,
                 notificar_cantidad_minima: parseInt(this.state.notificar_cantidad_minima.replace(/\./gi,'')),
                 user_created: this.state.user_created,
                 user_updated: this.state.user_updated
@@ -116,6 +136,7 @@ export default class InventarioForm extends Component{
                     cantidad: '0',
                     precio_costo: '0',
                     precio_venta: '0',
+                    tipoImpuestoSelected: {},
                     notificar_cantidad_minima: '0',
                     textButton:'Crear',
                     titleForm: 'Crear Inventario',
@@ -126,6 +147,7 @@ export default class InventarioForm extends Component{
             const inventario = {
                 codigo: this.state.codigo,
                 descripcion: this.state.descripcion,
+                tipoImpuesto: this.state.tipoImpuestoSelected.value,
                 cantidad: this.state.cantidad && parseInt((this.state.cantidad+"").replace(/\./gi,'')),
                 notificar_cantidad_minima: this.state.notificar_cantidad_minima && parseInt((this.state.notificar_cantidad_minima+"").replace(/\./gi,'')),
                 precio_costo: this.state.precio_costo && parseInt((this.state.precio_costo+"").replace(/\./gi,'')),
@@ -181,15 +203,24 @@ export default class InventarioForm extends Component{
                                     onChange={this.onChangeDescripcion} 
                                 />
                             </div>      
-                            <div className="form-group col-md-12">
+                            <div className="form-group col-md-6">
                                 <label>Notificar en cantidad minima: </label>
                                 <input type="text" 
                                     required
                                     className="form-control"
                                     value={this.state.notificar_cantidad_minima}
-                                    onChange={this.onChangeNotificarCantidadMinima}                                     
+                                    onChange={this.onChangeNotificarCantidadMinima}
                                 />
-                            </div>                                                 
+                            </div>
+                            <div className="form-group col-md-6">
+                                <label>Tipo de Impuesto: </label>
+                                <Select
+                                    value={this.state.tipoImpuestoSelected}
+                                    options={this.state.tipoImpuestoOptions}
+                                    onChange={this.onChangeTipoImpuesto}
+                                    required/>
+                            </div>                            
+                            
                             <div className="form-group col-md-4">
                                 <label>Cantidad: </label>
                                 <NumericFormat 
