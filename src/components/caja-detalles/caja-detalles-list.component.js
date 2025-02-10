@@ -41,7 +41,7 @@ export default class CajaDetallesList extends Component{
         await axios.get(process.env.REACT_APP_SERVER_URL + "/cajas-detalles/estado/"+id+"/Agregado")
         //await axios.get(process.env.REACT_APP_SERVER_URL + "/cajas-detalles/estado/"+id+"/Facturado")
             .then(response => {
-                console.log("response detalles", response.data)
+                //console.log("response detalles", response.data)
                 this.setState({
                     datos: response.data,
                     loading: false
@@ -86,6 +86,9 @@ export default class CajaDetallesList extends Component{
     createData = (id) => {this.setState({idUpdate: id})}
 
     printTicket = async (datos) => {       
+
+        console.log('## datos', datos);
+        
         const factura = {
             ruc: datos.cliente.ruc,
             razonSocial: datos.cliente.razonsocial,
@@ -125,12 +128,16 @@ export default class CajaDetallesList extends Component{
         })
         .catch(err => console.log(err));
         
-        //Imprimiendo el ticket
-        this.openPrintTicket(datos);
-        
-        //Imprimiendo la factura
-        //this.openPrintFactura(datos);
+        console.log("## Operacion", datos.operacion)
+        console.log("## Operacion > ", datos.operacion == "ImprimirFactura")
 
+        if(datos.operacion == "ImprimirFactura"){
+            //Imprimiendo la factura
+            this.openPrintFactura(datos);
+        }else{
+            //Imprimiendo el ticket
+            this.openPrintTicket(datos);
+        }
         const caja = {
             id: this.state.caja._id,
             ultimoVuelto: parseInt((datos.vuelto+"").replace(/\./gi,''))
@@ -237,73 +244,14 @@ export default class CajaDetallesList extends Component{
         });
         
     }
-    /*
-    openPrintTicket = (datos) => {
-        return new Promise((resolve, reject) => {
-
-            const table = document.createElement('table');
-            table.style.width = "200px";
-            table.style.fontSize = "10px";
-            let headerRow = document.createElement('tr');
-
-            let th = document.createElement('th');
-            th.colSpan = 4;
-            th.style.fontSize = "14px";
-            th.style.textAlign = "center";
-            th.textContent = datos.timbrado.nombreEmpresa;
-            headerRow.appendChild(th);
-            table.appendChild(headerRow);
-
-            headerRow = document.createElement('tr');
-            th = document.createElement('td');
-            th.colSpan = 4;
-            th.style.textAlign = "center";
-            //th.textContent = "Comprobante #" + datos.timbrado.comprobante;
-            th.textContent = "Comprobante #" + datos.timbrado.comprobante;
-            headerRow.appendChild(th);
-            table.appendChild(headerRow);
-
-            headerRow = document.createElement('tr');
-            const headers = process.env.REACT_APP_FACTURA_HEADERS.split(",");
-            headers.forEach(header => {
-                const th = document.createElement('th');
-                th.textContent = header;
-                headerRow.appendChild(th);
-            });
-            table.appendChild(headerRow);
-            
-            this.state.datos.forEach(record => {
-                const row = document.createElement('tr');
-                const { inventario, cantidad, precio, total } = record;
-                const data = [inventario.descripcion , convertMiles(cantidad), convertMiles(precio), convertMiles(total)]
-                
-                data.forEach(value => {
-                    const td = document.createElement('td');
-                    td.textContent = value;
-                    row.appendChild(td);
-                });
-                
-                table.appendChild(row);
-            });
-
-            //console.log(table);
-
-            const printWindow = window.open('', 'Print', 'height=600,width=800');
-            printWindow.document.write(table.outerHTML);
-            printWindow.print();
-
-            resolve(printWindow.close());            
-        });
-        
-    }*/
 
     openPrintFactura = (datos) => {
         return new Promise((resolve, reject) => {
 
-            console.log('datos', datos);
-            let total = parseInt(datos.total)
-            let iva_10_valor = convertMiles( total / 11);
-            let iva_total_valor = iva_10_valor;
+            console.log('openPrintFactura.datos', datos);
+            let iva_10_valor =  document.querySelector("#subtotal_iva10").innerHTML.replaceAll('.','') / 11;
+            let iva_5_valor =  document.querySelector("#subtotal_iva5").innerHTML.replaceAll('.','') / 22;
+            let iva_total_valor = convertMiles(iva_10_valor + iva_5_valor);
 
             const div_a4_sheet = document.createElement('div');
             const c1_contenido = document.createElement('table');
@@ -364,22 +312,22 @@ export default class CajaDetallesList extends Component{
             c1_fecha_emision.textContent = `${dia}/${mes}/${anio}`;
             c1_ruc.textContent = datos.cliente.ruc;
             c1_razon_social.textContent = datos.cliente.razonsocial;
-            c1_subtotales_5.textContent = "subtotales_5";
-            c1_subtotales_10.textContent = "subtotales_10";
-            c1_total_pagar.textContent = datos.total;
-            c1_iva_5.textContent = "iva_5";
-            c1_iva_10.textContent = iva_10_valor;
+            c1_subtotales_5.textContent = document.querySelector("#subtotal_iva5").innerHTML;
+            c1_subtotales_10.textContent = document.querySelector("#subtotal_iva10").innerHTML;
+            c1_total_pagar.textContent = convertMiles(datos.total);
+            c1_iva_5.textContent = convertMiles(iva_5_valor);
+            c1_iva_10.textContent = convertMiles(iva_10_valor);
             c1_iva_total.textContent = iva_total_valor;
 
             c2_contado.textContent = "X";
             c2_fecha_emision.textContent = `${dia}/${mes}/${anio}`;
             c2_ruc.textContent = datos.cliente.ruc;
             c2_razon_social.textContent = datos.cliente.razonsocial;
-            c2_subtotales_5.textContent = "subtotales_5";
-            c2_subtotales_10.textContent = "subtotales_10";
-            c2_total_pagar.textContent = datos.total;
-            c2_iva_5.textContent = "iva_5";
-            c2_iva_10.textContent = iva_10_valor;
+            c2_subtotales_5.textContent = document.querySelector("#subtotal_iva5").innerHTML;
+            c2_subtotales_10.textContent = document.querySelector("#subtotal_iva10").innerHTML;
+            c2_total_pagar.textContent = convertMiles(datos.total);
+            c2_iva_5.textContent = convertMiles(iva_5_valor);
+            c2_iva_10.textContent = convertMiles(iva_10_valor);
             c2_iva_total.textContent = iva_total_valor;
 
             div_a4_sheet.appendChild(c1_contado);
@@ -414,8 +362,15 @@ export default class CajaDetallesList extends Component{
                     td.textContent = value;
                     row.appendChild(td);
                 });
-                c1_contenido.appendChild(row);
-                //c2_contenido.appendChild(row);   
+                
+                // Crear una copia del row para c1_contenido
+                const rowCopy1 = row.cloneNode(true); // Clona el nodo
+                c1_contenido.appendChild(rowCopy1);
+
+                // Crear otra copia del row para c2_contenido
+                const rowCopy2 = row.cloneNode(true); // Clona el nodo
+                c2_contenido.appendChild(rowCopy2);
+
             });
 
             div_a4_sheet.appendChild(c1_contenido);
@@ -426,7 +381,166 @@ export default class CajaDetallesList extends Component{
             const printWindow = window.open('', 'Print', 'height=600,width=800');
             printWindow.document.write(div_a4_sheet.outerHTML);
             printWindow.document.write(`
-            <style>body{margin:0;padding:0;box-sizing:border-box}.a4_sheet{height:210mm;width:297mm;padding:20mm;position:relative;background-color:#fff}
+            <style>body {
+                margin:0;
+                padding:0;
+                box-sizing:border-box
+            }
+            .a4_sheet {
+                height:210mm;
+                width:297mm;
+                padding:20mm;
+                position:relative;
+                background-color:#fff
+            }
+            .positioned_element {
+                position:absolute;
+                font-size:12px
+            }
+            .c1_contado_x {
+                top: 54mm;
+                left: 130mm;
+                width: 4mm;
+            }            
+            .c1_fecha_emision {
+                top:54mm;
+                left:42mm;
+                width:130mm
+            }
+            .c1_ruc {
+                top: 60mm;
+                left: 26mm;
+                width: 40mm;
+            }
+            .c1_razon_social {
+                top: 66mm;
+                left: 52mm;
+                width: 95mm;
+            }            
+            .c1_contenido {
+                top: 84mm;
+                left: 28mm;
+                width: 128mm;
+            }            
+            .c1_subtotales_5 {
+                top: 202mm;
+                left: 128mm;
+                width: 15mm;
+                text-align: right;
+            }
+            .c1_subtotales_10,.c1_total_pagar {
+                left: 138mm;
+                width: 18mm;
+                text-align: right;
+            }
+            .c1_subtotales_10 {
+                top: 202mm;
+            }
+            .c1_total_pagar {
+                top: 208mm;
+            }
+            .c1_iva_10,.c1_iva_5 {
+                width: 15mm;
+                top: 214mm;
+            }
+            .c1_iva_5 {
+                left:56mm;
+            }
+            .c1_iva_10 {
+                left:80mm;
+            }
+            .c1_iva_total {
+                top: 214mm;
+                left: 110mm;
+                width: 30mm;
+            }
+
+            .c2_contado_x {
+                top: 54mm;
+                left: 292mm;
+                width: 4mm;
+            }
+            .c2_contenido {
+                top: 84mm;
+                left: 184mm;
+                width: 128mm;
+            }
+            .c2_fecha_emision {
+                top: 54mm;
+                left: 200mm;
+                width: 130mm;
+            }
+            .c2_ruc {
+                top: 60mm;
+                left: 180mm;
+                width: 40mm;
+            }
+            .c2_razon_social {
+                top: 66mm;
+                left: 208mm;
+                width: 95mm;
+            }
+            .c2_subtotales_5 {
+                top: 202mm;
+                left: 276mm;
+                width: 15mm;
+                text-align: right;
+            }
+            .c2_subtotales_10 {
+                top: 202mm;
+                left: 290mm;
+                width: 18mm;
+                text-align: right;
+            }
+            .c2_total_pagar {
+                top: 208mm;
+                left: 275mm;
+                width: 33mm;
+                text-align: right;
+            }
+            .c2_iva_10,.c2_iva_5,table tr td:nth-child(4),table tr td:nth-child(5) {
+                width:15mm
+            }
+            .c2_iva_5 {
+                top: 214mm;
+                left: 212mm;
+            }
+            .c2_iva_10 {
+                top: 214mm;
+                left: 238mm;
+            }
+            .c2_iva_total {
+                top: 214mm;
+                left: 275mm;
+                width: 30mm;
+            }
+            table tr td:first-child {
+                width: 10mm;
+                padding-right: 1mm;
+            }
+            table td:nth-child(2) {
+                padding-left: 6mm;
+                width: 46mm;
+            }
+            table tr td:nth-child(3) {
+                width:13mm
+            }
+            table tr td:nth-child(6) {
+                width:18mm
+            }
+            table tr td:first-child,table tr td:nth-child(3),table tr td:nth-child(4),table tr td:nth-child(5),
+            table tr td:nth-child(6) {
+                text-align:right
+            }
+            </style>
+            `)
+
+            //printWindow.print();
+            //resolve(printWindow.close());            
+        });
+
+        /*
+        <style>body{margin:0;padding:0;box-sizing:border-box}.a4_sheet{height:210mm;width:297mm;padding:20mm;position:relative;background-color:#fff}
             .positioned_element{position:absolute;font-size:12px}.c1_contado_x{top:43mm;left:122mm;width:4mm}.c2_contado_x{top:43mm;left:262mm;width:4mm}
             .c1_fecha_emision{top:43mm;left:38mm;width:130mm}.c1_ruc{top:48mm;left:24mm;width:40mm}.c1_razon_social{top:53mm;left:47mm;width:95mm}
             .c2_fecha_emision{top:43mm;left:180mm;width:130mm}.c2_ruc{top:48mm;left:165mm;width:40mm}.c2_razon_social{top:53mm;left:188mm;width:95mm}
@@ -439,12 +553,8 @@ export default class CajaDetallesList extends Component{
             table tr td:first-child{width:12mm;padding-right:1mm}table td:nth-child(2){padding-left:1mm;width:40mm}table tr td:nth-child(3){width:13mm}
             table tr td:nth-child(6){width:18mm}table tr td:first-child,table tr td:nth-child(3),table tr td:nth-child(4),table tr td:nth-child(5),
             table tr td:nth-child(6){text-align:right}</style>
-            `)
-
-            printWindow.print();
-
-            resolve(printWindow.close());            
-        });
+        */
+       
         
     }
     
@@ -482,7 +592,6 @@ export default class CajaDetallesList extends Component{
             if(dato.inventario.tipoImpuesto == 1) subtotal_iva5 += dato.total;
             if(dato.inventario.tipoImpuesto == 2) subtotal_excentas += dato.total;
         })
-        
         
         return (
             <div className="card-footer font-weight-bold">     

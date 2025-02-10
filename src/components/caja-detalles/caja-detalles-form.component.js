@@ -10,11 +10,15 @@ export default class CajaDetallesForm extends Component{
     static contextType = UserContext;
     constructor(props){
         super(props);
+        this.formRef = React.createRef();
+        this.selectRef = React.createRef();
         this.state = {  
             ruc:'',
             div:'',
             razonsocial:'',
+            operacion: '',
             timbrado: {},
+            inventarioSelectedKey: 0,
             inventarioSelected: {},
             inventarioOptions: [],
             clienteSelected: {},
@@ -47,9 +51,16 @@ export default class CajaDetallesForm extends Component{
         this.getClientesOptions(); //Obtiene los Clientes
 
         setInterval(() => {            
+            /*
             if (document.activeElement !== this._input){
                 this._input.focus();
             };
+            */
+            if (document.activeElement !== this.selectRef.current){
+                //this.selectRef.current.focus();
+            };
+            
+
             if (document.activeElement !== this._inputRecibido){
                 this._inputRecibido.focus();
             };
@@ -121,7 +132,8 @@ export default class CajaDetallesForm extends Component{
         if (e.key === "-") {
             document.querySelector('#PanelProductos').classList.remove("d-none");
             document.querySelector('#PanelVueltos').classList.add("d-none");
-            this._input.focus();//Enfoca en el input del vuelto
+            this.selectRef.current.focus();
+            //this._input.focus();//Enfoca en el input del vuelto
             e.preventDefault();//Para que no cargue el key
         }
         if (e.key === "+" || e.key === "Enter") {
@@ -149,11 +161,33 @@ export default class CajaDetallesForm extends Component{
             }
         }
         if (e.key === "-")  e.preventDefault();//Para que no cargue el key
-    }
-    onChangeCodigoBarra = (e) => {
-        this.setState({codigoBarra: e.target.value})
-        let codigobarra = e.target.value;
         
+    }
+
+    onChangeCodigoBarra  = (selectedOption) => {
+        this.setState({
+            inventarioSelected: selectedOption
+        })
+ 
+        let cantidad = 1;
+        let inventario = selectedOption;
+        let precio = inventario.precio;
+        let total = parseInt(inventario.precio * cantidad);
+        
+        this.setState({
+            inventarioSelected: inventario,
+            producto: inventario.label,
+            cantidad,
+            precio,
+            total
+        })
+        
+    }
+
+    onInputChangeCodigoBarra = (selectedOption) => {
+        this.setState({codigoBarra: selectedOption})
+        let codigobarra = selectedOption;
+
         if (codigobarra.length === 13){
             //verificando codigo de barra definido por el producto
             let cod_inv =  parseInt(codigobarra);
@@ -190,7 +224,7 @@ export default class CajaDetallesForm extends Component{
                 let precio = inventario.precio;
                 let total = parseInt(inventario.precio * cantidad);
                 
-                this.setState({
+                this.setState({                    
                     inventarioSelected: inventario,
                     producto: inventario.label,
                     cantidad,
@@ -198,7 +232,9 @@ export default class CajaDetallesForm extends Component{
                     total
                 })
             }
-        }else{
+        }
+        /*
+        else{
             this.setState({
                 inventarioSelected: this.state.inventarioOptions[0],
                 producto: this.state.inventarioOptions[0].label,
@@ -206,9 +242,13 @@ export default class CajaDetallesForm extends Component{
                 precio: '',
                 total: ''
             })
-        }
+        }*/
     }
-    onChangeCantidad = (e) => {this.setState({cantidad: e.target.value})}
+    onChangeCantidad = (e) => {
+        let cantidad = parseFloat( e.target.value.replace(',','.') );
+        let total = parseInt(this.state.precio * cantidad);
+        this.setState({cantidad, total})
+    }
     onChangePrecio = (e) => {this.setState({precio: e.target.value})}
     onChangeTotal = (e) => {this.setState({total: e.target.value})}
     onChangeProducto = (e) => {this.setState({producto: e.target.value})}
@@ -250,7 +290,8 @@ export default class CajaDetallesForm extends Component{
         }
         */
         //Enfocar el input
-        this._input.focus(); 
+        //this._input.focus(); 
+        this.selectRef.current.focus();
         //actualizar Lista
         this.props.onUpdateParentList('true');
         //setTimeout(function(){  document.querySelector('#alert').classList.replace('show','hide'); }, 3000);
@@ -276,6 +317,7 @@ export default class CajaDetallesForm extends Component{
 
             this.setState({
                 codigoBarra:'',
+                inventarioSelectedKey: this.state.inventarioSelectedKey + 1, //limpia el contenedor del select
                 inventarioSelected: this.state.inventarioOptions[0],
                 producto: '',
                 cantidad: '',
@@ -286,7 +328,8 @@ export default class CajaDetallesForm extends Component{
 
     onSubtmitCliente = (e) => {
         e.preventDefault();
-        let factura = {            
+        let factura = {    
+            operacion: this.state.operacion,         
             caja: this.props.caja,
             cliente: this.state.clienteSelected.value,
             timbrado: this.state.timbrado,
@@ -313,10 +356,20 @@ export default class CajaDetallesForm extends Component{
             .catch(err => console.log(err));        
     }   
 
+    imprimirFactura = () => {
+        this.setState({
+            operacion: "ImprimirFactura"
+        }, () => { document.querySelector("#buttonSubmitCliente").click(); });
+
+        
+
+    }
+
     submitTicket = (factura) =>{
         this.props.onParentPrintTicket(factura);
 
         this.setState({
+            operacion: '',
             pagamiento_recibido:'',
             pagamiento_total:'',
             pagamiento_vuelto:''
@@ -325,7 +378,8 @@ export default class CajaDetallesForm extends Component{
         document.querySelector('#PanelProductos').classList.remove("d-none");
         document.querySelector('#PanelVueltos').classList.add("d-none");
         document.querySelector('#PanelCliente').classList.add("d-none");
-        this._input.focus();//Enfoca en el input del vuelto  
+        //this._input.focus();//Enfoca en el input del vuelto  
+        this.selectRef.current.focus();
     }
     
     render(){
@@ -333,20 +387,22 @@ export default class CajaDetallesForm extends Component{
         <div>
             <div id="PanelProductos" className="container"> 
                 <h3>{this.state.titleForm}</h3>
-                <form onSubmit={this.onSubtmit}>
+                <form onSubmit={this.onSubtmit} ref={this.formRef}>
                         <div className="row">
                             <div className="form-group col-md-12">
                                 <label>Codigo Barra: </label>
-                                <input id="codigobarra" type="text" 
+                                <Select id="codigobarra"   
+                                    key={this.state.inventarioSelectedKey}       
                                     autoFocus={true}
-                                    ref={c => (this._input = c)}
-                                    required
-                                    maxLength={13} 
-                                    className="form-control"
-                                    value={this.state.codigoBarra}
+                                    ref={this.selectRef}
+                                    noOptionsMessage={() => 'Sin resultados'}
+                                    value={this.state.inventarioSelected} 
+                                    options={this.state.inventarioOptions} 
                                     onChange={this.onChangeCodigoBarra} 
-                                    onKeyPress={this.onKeyPressCodigoBarra}
-                                />
+                                    onInputChange={this.onInputChangeCodigoBarra}
+                                    onKeyDown={this.onKeyPressCodigoBarra}                                                                                                         
+                                   />
+
                             </div>
                             <div className="form-group col-md-12">
                                 <label>Producto: </label>
@@ -365,7 +421,7 @@ export default class CajaDetallesForm extends Component{
                                     className="form-control"
                                     value={this.state.cantidad}
                                     onChange={this.onChangeCantidad}
-                                    disabled
+                                    
                                 />
                             </div>
                             <div className="form-group col-md-4">
@@ -490,10 +546,10 @@ export default class CajaDetallesForm extends Component{
                         </div>     
                     </div>                      
                     <div className="form-group">
-                        <button type="button" onClick={() => this.irCajas()} className="btn btn-success">Imprimir Factura</button>
+                        <button type="button" onClick={() => this.imprimirFactura()} className="btn btn-success">Imprimir Factura</button>
                     </div>
                     <div className="form-group d-none">
-                        <button type="submit" className="btn btn-warning"></button>
+                        <button id='buttonSubmitCliente' type="submit" className="btn btn-warning"></button>
                     </div>                                
                 </form>
             </div>

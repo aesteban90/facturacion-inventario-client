@@ -56,15 +56,18 @@ export default class CajaFacturasList extends Component{
     irCajas = () => {window.location = "Caja"}
    
     datalist(){
-        console.log(this.state.datos)
         return this.state.datos.map((dato, index) => {            
-            const factura = dato._id.factura[0];
-            return (
-                <li className="list-productos list-group-item " key={index}>
-                    <div className="col-md-12"><b>Razon Social: {factura.razonSocial + " - Ruc: " + factura.ruc  } </b></div>
-                    {this.datalistDetalle(dato)}                   
-                </li>)
+            const factura = dato._id.factura[0];            
+            if(factura) {
+                return (
+                    <li className="list-productos list-group-item " key={index}>
+                        <div className="col-md-12"><b>Razon Social: {factura.razonSocial + " - Ruc: " + factura.ruc  } </b></div>
+                        {this.datalistDetalle(dato)}                   
+                    </li>)
+
+            }
         })
+        
     }
 
     render(){       
