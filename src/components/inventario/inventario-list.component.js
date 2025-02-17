@@ -79,7 +79,7 @@ export default class InventarioList extends Component{
                     </div>
                     <div className="col-md-3">{dato.descripcion} 
                         <br />
-                        <span class={`p-2 badge ${this.state.tipoImpuestoOptions[dato.tipoImpuesto] && this.state.tipoImpuestoOptions[dato.tipoImpuesto].class } `}> 
+                        <span className={`p-2 badge ${this.state.tipoImpuestoOptions[dato.tipoImpuesto] && this.state.tipoImpuestoOptions[dato.tipoImpuesto].class } `}> 
                         {this.state.tipoImpuestoOptions[dato.tipoImpuesto] && this.state.tipoImpuestoOptions[dato.tipoImpuesto].label }</span>
                         
                     </div>

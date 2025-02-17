@@ -399,102 +399,92 @@ export default class CajaDetallesList extends Component{
             }
             .c1_contado_x {
                 top: 54mm;
-                left: 130mm;
+                left: 136mm;
                 width: 4mm;
             }            
             .c1_fecha_emision {
-                top:54mm;
-                left:42mm;
-                width:130mm
+                top: 54mm;
+                left: 36mm;
+                width: 130mm;
             }
             .c1_ruc {
-                top: 60mm;
-                left: 26mm;
+                top: 62mm;
+                left: 20mm;
                 width: 40mm;
             }
             .c1_razon_social {
-                top: 66mm;
-                left: 52mm;
+                top: 68mm;
+                left: 48mm;
                 width: 95mm;
             }            
-            .c1_contenido {
-                top: 84mm;
-                left: 28mm;
-                width: 128mm;
-            }            
             .c1_subtotales_5 {
-                top: 202mm;
+                top: 222mm;
                 left: 128mm;
                 width: 15mm;
                 text-align: right;
             }
             .c1_subtotales_10,.c1_total_pagar {
-                left: 138mm;
+                left: 142mm;
                 width: 18mm;
                 text-align: right;
             }
             .c1_subtotales_10 {
-                top: 202mm;
+                top: 222mm;
             }
             .c1_total_pagar {
-                top: 208mm;
+                top: 230mm;
             }
             .c1_iva_10,.c1_iva_5 {
-                width: 15mm;
-                top: 214mm;
+                width: 19mm;
+                top: 238mm;
             }
             .c1_iva_5 {
-                left:56mm;
+                left: 54mm;
             }
             .c1_iva_10 {
-                left:80mm;
+                left: 84mm;
             }
             .c1_iva_total {
-                top: 214mm;
-                left: 110mm;
+                top: 238mm;
+                left: 120mm;
                 width: 30mm;
             }
 
             .c2_contado_x {
                 top: 54mm;
-                left: 292mm;
+                left: 316mm;
                 width: 4mm;
-            }
-            .c2_contenido {
-                top: 84mm;
-                left: 184mm;
-                width: 128mm;
             }
             .c2_fecha_emision {
                 top: 54mm;
-                left: 200mm;
+                left: 216mm;
                 width: 130mm;
             }
             .c2_ruc {
-                top: 60mm;
-                left: 180mm;
+                top: 62mm;
+                left: 199mm;
                 width: 40mm;
             }
             .c2_razon_social {
-                top: 66mm;
-                left: 208mm;
+                top: 68mm;
+                left: 228mm;
                 width: 95mm;
             }
             .c2_subtotales_5 {
-                top: 202mm;
-                left: 276mm;
+                top: 222mm;
+                left: 305mm;
                 width: 15mm;
                 text-align: right;
             }
             .c2_subtotales_10 {
-                top: 202mm;
-                left: 290mm;
+                top: 222mm;
+                left: 318mm;
                 width: 18mm;
                 text-align: right;
             }
             .c2_total_pagar {
-                top: 208mm;
-                left: 275mm;
+                top: 230mm;
+                left: 303mm;
                 width: 33mm;
                 text-align: right;
             }
@@ -502,18 +492,30 @@ export default class CajaDetallesList extends Component{
                 width:15mm
             }
             .c2_iva_5 {
-                top: 214mm;
-                left: 212mm;
+                top: 238mm;
+                left: 230mm;
             }
             .c2_iva_10 {
-                top: 214mm;
-                left: 238mm;
+                top: 238mm;
+                left: 261mm;
             }
             .c2_iva_total {
-                top: 214mm;
-                left: 275mm;
+                top: 238mm;
+                left: 300mm;
                 width: 30mm;
             }
+
+            .c1_contenido {
+                top: 90mm;
+                left: 25mm;
+                width: 132mm;
+            }
+            .c2_contenido {
+                top: 90mm;
+                left: 204mm;
+                width: 132mm;
+            }
+
             table tr td:first-child {
                 width: 10mm;
                 padding-right: 1mm;
