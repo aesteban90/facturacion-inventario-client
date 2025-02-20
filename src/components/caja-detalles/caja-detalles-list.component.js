@@ -310,7 +310,7 @@ export default class CajaDetallesList extends Component{
 
             c1_contado.textContent = "X";
             c1_fecha_emision.textContent = `${dia}/${mes}/${anio}`;
-            c1_ruc.textContent = datos.cliente.ruc;
+            c1_ruc.textContent = datos.cliente.ruc+"-"+datos.cliente.div;
             c1_razon_social.textContent = datos.cliente.razonsocial;
             c1_subtotales_5.textContent = document.querySelector("#subtotal_iva5").innerHTML;
             c1_subtotales_10.textContent = document.querySelector("#subtotal_iva10").innerHTML;
@@ -321,7 +321,7 @@ export default class CajaDetallesList extends Component{
 
             c2_contado.textContent = "X";
             c2_fecha_emision.textContent = `${dia}/${mes}/${anio}`;
-            c2_ruc.textContent = datos.cliente.ruc;
+            c2_ruc.textContent = datos.cliente.ruc+"-"+datos.cliente.div;
             c2_razon_social.textContent = datos.cliente.razonsocial;
             c2_subtotales_5.textContent = document.querySelector("#subtotal_iva5").innerHTML;
             c2_subtotales_10.textContent = document.querySelector("#subtotal_iva10").innerHTML;
@@ -352,10 +352,15 @@ export default class CajaDetallesList extends Component{
             div_a4_sheet.appendChild(c2_iva_10);
             div_a4_sheet.appendChild(c2_iva_total);
             
+            console.log('this.state.datos',this.state.datos);
+
             this.state.datos.forEach(record => {
                 const row = document.createElement('tr');
                 const { cantidad, inventario, precio, total } = record;
-                const data = [convertMiles(cantidad), inventario.descripcion , convertMiles(precio), "", "", convertMiles(total)]
+                const iva10 = (inventario.tipoImpuesto == 0 ? convertMiles(total) : "");
+                const iva5 = (inventario.tipoImpuesto == 1 ? convertMiles(total) : "");
+                const excentas = (inventario.tipoImpuesto == 2 ? convertMiles(total) : "");
+                const data = [convertMiles(cantidad), inventario.descripcion , convertMiles(precio), excentas, iva5, iva10]
                 
                 data.forEach(value => {
                     const td = document.createElement('td');
@@ -398,23 +403,24 @@ export default class CajaDetallesList extends Component{
                 font-size:12px
             }
             .c1_contado_x {
-                top: 54mm;
-                left: 136mm;
+                top: 58mm;
+                left: 144mm;
                 width: 4mm;
+                font-weight: bold;
             }            
             .c1_fecha_emision {
-                top: 54mm;
-                left: 36mm;
+                top: 58mm;
+                left: 46mm;
                 width: 130mm;
             }
             .c1_ruc {
-                top: 62mm;
-                left: 20mm;
+                top: 65mm;
+                left: 28mm;
                 width: 40mm;
             }
             .c1_razon_social {
-                top: 68mm;
-                left: 48mm;
+                top: 72mm;
+                left: 58mm;
                 width: 95mm;
             }            
             .c1_subtotales_5 {
@@ -436,55 +442,56 @@ export default class CajaDetallesList extends Component{
             }
             .c1_iva_10,.c1_iva_5 {
                 width: 19mm;
-                top: 238mm;
+                top: 237mm;
             }
             .c1_iva_5 {
-                left: 54mm;
+                left: 60mm;
             }
             .c1_iva_10 {
-                left: 84mm;
+                left: 89mm;
             }
             .c1_iva_total {
-                top: 238mm;
-                left: 120mm;
+                top: 237mm;
+                left: 130mm;
                 width: 30mm;
             }
 
             .c2_contado_x {
-                top: 54mm;
-                left: 316mm;
+                top: 58mm;
+                left: 320mm;
                 width: 4mm;
+                font-weight: bold;
             }
             .c2_fecha_emision {
-                top: 54mm;
-                left: 216mm;
+                top: 58mm;
+                left: 223mm;
                 width: 130mm;
             }
             .c2_ruc {
-                top: 62mm;
-                left: 199mm;
+                top: 65mm;
+                left: 204mm;
                 width: 40mm;
             }
             .c2_razon_social {
-                top: 68mm;
-                left: 228mm;
+                top: 72mm;
+                left: 232mm;
                 width: 95mm;
             }
             .c2_subtotales_5 {
                 top: 222mm;
-                left: 305mm;
+                left: 309mm;
                 width: 15mm;
                 text-align: right;
             }
             .c2_subtotales_10 {
                 top: 222mm;
-                left: 318mm;
+                left: 326mm;
                 width: 18mm;
                 text-align: right;
             }
             .c2_total_pagar {
                 top: 230mm;
-                left: 303mm;
+                left: 311mm;
                 width: 33mm;
                 text-align: right;
             }
@@ -492,28 +499,28 @@ export default class CajaDetallesList extends Component{
                 width:15mm
             }
             .c2_iva_5 {
-                top: 238mm;
-                left: 230mm;
+                top: 237mm;
+                left: 236mm;
             }
             .c2_iva_10 {
-                top: 238mm;
-                left: 261mm;
+                top: 237mm;
+                left: 266mm;
             }
             .c2_iva_total {
-                top: 238mm;
-                left: 300mm;
+                top: 237mm;
+                left: 306mm;
                 width: 30mm;
             }
 
             .c1_contenido {
-                top: 90mm;
-                left: 25mm;
-                width: 132mm;
+                top: 94mm;
+                left: 28mm;
+                width: 140mm;
             }
             .c2_contenido {
-                top: 90mm;
-                left: 204mm;
-                width: 132mm;
+                top: 94mm;
+                left: 206mm;
+                width: 140mm;
             }
 
             table tr td:first-child {

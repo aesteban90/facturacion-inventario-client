@@ -60,7 +60,7 @@ export default class ComprasList extends Component{
                         </div>
                     </div>
                     <div className="col-md-2">
-                        {dato.proveedor.razonsocial}
+                        {dato.proveedor ? dato.proveedor.razonsocial : "Sin Proveedor Seleccionado"}
                         
                     </div>
                     <div className="col-md-3 details-consumision "> 
