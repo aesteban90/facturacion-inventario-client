@@ -386,10 +386,150 @@ export default class CajaDetallesList extends Component{
             const printWindow = window.open('', 'Print', 'height=600,width=800');
             printWindow.document.write(div_a4_sheet.outerHTML);
             printWindow.document.write(`
-            <style>body {
-                margin:0;
-                padding:0;
-                box-sizing:border-box
+            <style>
+                        
+            .c1_contado_x {
+                top: 60mm;
+                left: 152mm;
+                width: 4mm;
+                font-weight: bold;
+            }
+
+            .c1_fecha_emision {
+                top: 61mm;
+                left: 48mm;
+                width: 130mm;
+            }
+
+            .c1_ruc {
+                top: 67mm;
+                left: 30mm;
+                width: 40mm;
+            }
+
+            .c1_razon_social {
+                top: 74mm;
+                left: 58mm;
+                width: 95mm;
+            }
+
+            .positioned_element {
+                position: absolute;
+                font-size: 12px;
+            }
+
+            .c1_subtotales_5 {
+                top: 229mm;
+                left: 140mm;
+                width: 15mm;
+                text-align: right;
+            }   
+            .c1_subtotales_10 {
+                left: 156mm;
+                top: 229mm;
+            }
+            .c1_total_pagar {
+                left: 144mm;
+                top: 237mm;
+            }
+
+            .c1_subtotales_10, .c1_total_pagar {
+                /* left: 152mm; */
+                width: 18mm;
+                text-align: right;
+            }
+
+
+            .c1_iva_5 {
+                left: 60mm;
+            }
+
+            .c1_iva_10 {
+                left: 89mm;
+            }
+
+            .c1_iva_10, .c1_iva_5 {
+                width: 19mm;
+                top: 244mm;
+            }
+            .c1_iva_total {
+                top: 244mm;
+                left: 130mm;
+                width: 30mm;
+            }
+            .c2_contado_x {
+                top: 60mm;
+                left: 334mm;
+                width: 4mm;
+                font-weight: bold;
+            }
+            .c2_fecha_emision {
+                top: 61mm;
+                left: 228mm;
+                width: 130mm;
+            }
+            .c2_ruc {
+                top: 67mm;
+                left: 210mm;
+                width: 40mm;
+            }
+            .c2_razon_social {
+                top: 74mm;
+                left: 238mm;
+                width: 95mm;
+            }
+
+            .c2_subtotales_5 {
+                top: 229mm;
+                left: 319mm;
+                width: 15mm;
+                text-align: right;
+            }
+            .c2_subtotales_10 {
+                top: 229mm;
+                left: 332mm;
+                width: 18mm;
+                text-align: right;
+            }
+            .c2_total_pagar {
+                top: 237mm;
+                left: 311mm;
+                width: 33mm;
+                text-align: right;
+            }
+            .c2_iva_5 {
+                top: 244mm;
+                left: 244mm;
+            }
+            .c2_iva_10 {
+                top: 244mm;
+                left: 273mm;
+            }
+            .c2_iva_total {
+                top: 244mm;
+                left: 311mm;
+                width: 30mm;
+            }
+            .c1_contenido {
+                top: 99mm;
+                left: 33mm;
+                width: 140mm;
+            }
+            .c2_contenido {
+                top: 99mm;
+                left: 212mm;
+                width: 139mm;
+            }
+
+            
+            /* ######################################################################## */
+
+            body {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                top: 1mm;
+                position: absolute;
             }
             .a4_sheet {
                 height:210mm;
@@ -402,127 +542,10 @@ export default class CajaDetallesList extends Component{
                 position:absolute;
                 font-size:12px
             }
-            .c1_contado_x {
-                top: 58mm;
-                left: 144mm;
-                width: 4mm;
-                font-weight: bold;
-            }            
-            .c1_fecha_emision {
-                top: 58mm;
-                left: 46mm;
-                width: 130mm;
-            }
-            .c1_ruc {
-                top: 65mm;
-                left: 28mm;
-                width: 40mm;
-            }
-            .c1_razon_social {
-                top: 72mm;
-                left: 58mm;
-                width: 95mm;
-            }            
-            .c1_subtotales_5 {
-                top: 222mm;
-                left: 128mm;
-                width: 15mm;
-                text-align: right;
-            }
-            .c1_subtotales_10,.c1_total_pagar {
-                left: 142mm;
-                width: 18mm;
-                text-align: right;
-            }
-            .c1_subtotales_10 {
-                top: 222mm;
-            }
-            .c1_total_pagar {
-                top: 230mm;
-            }
-            .c1_iva_10,.c1_iva_5 {
-                width: 19mm;
-                top: 237mm;
-            }
-            .c1_iva_5 {
-                left: 60mm;
-            }
-            .c1_iva_10 {
-                left: 89mm;
-            }
-            .c1_iva_total {
-                top: 237mm;
-                left: 130mm;
-                width: 30mm;
-            }
 
-            .c2_contado_x {
-                top: 58mm;
-                left: 320mm;
-                width: 4mm;
-                font-weight: bold;
-            }
-            .c2_fecha_emision {
-                top: 58mm;
-                left: 223mm;
-                width: 130mm;
-            }
-            .c2_ruc {
-                top: 65mm;
-                left: 204mm;
-                width: 40mm;
-            }
-            .c2_razon_social {
-                top: 72mm;
-                left: 232mm;
-                width: 95mm;
-            }
-            .c2_subtotales_5 {
-                top: 222mm;
-                left: 309mm;
-                width: 15mm;
-                text-align: right;
-            }
-            .c2_subtotales_10 {
-                top: 222mm;
-                left: 326mm;
-                width: 18mm;
-                text-align: right;
-            }
-            .c2_total_pagar {
-                top: 230mm;
-                left: 311mm;
-                width: 33mm;
-                text-align: right;
-            }
             .c2_iva_10,.c2_iva_5,table tr td:nth-child(4),table tr td:nth-child(5) {
                 width:15mm
             }
-            .c2_iva_5 {
-                top: 237mm;
-                left: 236mm;
-            }
-            .c2_iva_10 {
-                top: 237mm;
-                left: 266mm;
-            }
-            .c2_iva_total {
-                top: 237mm;
-                left: 306mm;
-                width: 30mm;
-            }
-
-            .c1_contenido {
-                top: 94mm;
-                left: 28mm;
-                width: 140mm;
-            }
-            .c2_contenido {
-                top: 94mm;
-                left: 206mm;
-                width: 140mm;
-            }
-
             table tr td:first-child {
                 width: 10mm;
                 padding-right: 1mm;
@@ -544,8 +567,8 @@ export default class CajaDetallesList extends Component{
             </style>
             `)
 
-            //printWindow.print();
-            //resolve(printWindow.close());            
+            printWindow.print();
+            resolve(printWindow.close());            
         });
 
         /*
